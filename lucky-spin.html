@@ -521,23 +521,31 @@ function drawWheel(rot) {
       wctx.fillStyle = g; wctx.fill();
     }
 
-    // Text: prize label, same size everywhere
+    // Text: price + prize emoji, same size everywhere
     wctx.save();
     wctx.rotate(mid);
     wctx.textBaseline = 'middle';
     wctx.textAlign = 'right';
-    wctx.font = '800 22px -apple-system,sans-serif';
 
+    let priceText, emoji, priceColor;
     if (sec.prize === 'tshirt') {
-      wctx.fillStyle = '#ffffff';
-      wctx.fillText('250.000₫', R - 14, 0);
+      priceText = '250.000₫'; emoji = '👕'; priceColor = '#ffffff';
     } else if (sec.prize === 'plain') {
-      wctx.fillStyle = '#14211a';
-      wctx.fillText('50.000₫', R - 14, 0);
+      priceText = '50.000₫';  emoji = '🥐'; priceColor = '#14211a';
     } else {
-      wctx.fillStyle = '#132C6B';
-      wctx.fillText('50.000₫', R - 14, 0);
+      priceText = '50.000₫';  emoji = '🍳'; priceColor = '#132C6B';
     }
+
+    // Emoji at the outer edge
+    wctx.font = '20px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
+    wctx.fillText(emoji, R - 14, 0);
+    const emojiW = wctx.measureText(emoji).width;
+
+    // Price to the left of the emoji
+    wctx.font = '800 22px -apple-system,sans-serif';
+    wctx.fillStyle = priceColor;
+    wctx.fillText(priceText, R - 14 - emojiW - 5, 0);
+
     wctx.restore();
   });
 
