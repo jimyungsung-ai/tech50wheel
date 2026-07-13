@@ -80,24 +80,35 @@ body > * { position: relative; z-index: 1; }
   pointer-events: none;
 }
 
-/* Grab scooter drive-by — occasional emoji zips across the screen */
+/* Grab scooter drive-by — occasional emoji zips across the screen at a slight diagonal */
 .scooter {
   position: fixed;
-  left: 0; top: 0;
+  left: 0;
   font-size: 68px;
   z-index: 5;
   pointer-events: none;
-  will-change: left, transform;
+  will-change: transform;
   filter: drop-shadow(0 6px 16px rgba(0,0,0,0.18));
   line-height: 1;
 }
-.scooter span { display: inline-block; }
-.scooter.rtl span { transform: scaleX(-1); }
-.scooter.dir-right { animation: scoot-right var(--dur, 6s) linear forwards, scoot-bob 0.5s ease-in-out infinite; }
-.scooter.dir-left  { animation: scoot-left  var(--dur, 6s) linear forwards, scoot-bob 0.5s ease-in-out infinite; }
-@keyframes scoot-right { from { left: -140px; } to { left: calc(100vw + 40px); } }
-@keyframes scoot-left  { from { left: calc(100vw + 40px); } to { left: -140px; } }
-@keyframes scoot-bob   { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.scooter span {
+  display: inline-block;
+  animation: scoot-bob 0.5s ease-in-out infinite;
+}
+.scooter.dir-right { animation: scoot-r var(--dur, 6s) linear forwards; }
+.scooter.dir-left  { animation: scoot-l var(--dur, 6s) linear forwards; }
+@keyframes scoot-r {
+  from { transform: translate(-160px, 0); }
+  to   { transform: translate(calc(100vw + 40px), var(--diag, 0px)); }
+}
+@keyframes scoot-l {
+  from { transform: translate(calc(100vw + 40px), 0); }
+  to   { transform: translate(-160px, var(--diag, 0px)); }
+}
+@keyframes scoot-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
 
 /* ═══ Card / Grid ═══ */
 .app {
@@ -794,15 +805,20 @@ function scheduleSpotlight() {
 setTimeout(scheduleSpotlight, 1500);
 
 // ═══════════ SCOOTER DRIVE-BY ═══════════
-// Every so often a Grab-style scooter zips across the screen.
+// Every so often a Grab-style scooter zips across the screen at a slight diagonal.
 // 🛵 emoji faces left on most systems, so we drive R→L to match its orientation.
 function launchScooter() {
   const el = document.createElement('div');
   el.className = 'scooter dir-left';
   el.innerHTML = '<span>🛵</span>';
-  const top = 80 + Math.random() * Math.max(50, window.innerHeight - 220);
-  el.style.top = top + 'px';
-  const dur = 5 + Math.random() * 3; // 5–8s to cross
+  // Start Y — leave enough room for the diagonal drift
+  const startY = 120 + Math.random() * Math.max(50, window.innerHeight - 320);
+  el.style.top = startY + 'px';
+  // Diagonal drift over the trip: ±60–140px, random up or down
+  const dir  = Math.random() < 0.5 ? -1 : 1;
+  const diag = (60 + Math.random() * 80) * dir;
+  el.style.setProperty('--diag', diag + 'px');
+  const dur = 5 + Math.random() * 3;
   el.style.setProperty('--dur', dur + 's');
   document.body.appendChild(el);
   setTimeout(() => el.remove(), dur * 1000 + 300);
