@@ -321,27 +321,13 @@ const SHADE_BY_UNITS = {
 const wc   = document.getElementById('wheelCanvas');
 const wctx = wc.getContext('2d');
 const CX = wc.width / 2, CY = wc.height / 2;
-const OUTER  = CX - 6;       // 224 — outer ring outer edge
-const CREAM_R = OUTER - 18;  // 206 — cream band
-const R      = CREAM_R - 6;  // 200 — sector drawing radius
+const R  = CX - 6;           // sectors fill full radius, no outer band
 const BASE_ANGLE = -Math.PI / 2;
 
 function drawWheel(rot) {
   wctx.clearRect(0, 0, wc.width, wc.height);
   wctx.save();
   wctx.translate(CX, CY);
-
-  // ── Outer cream ring ──
-  const ringG = wctx.createRadialGradient(0, 0, CREAM_R, 0, 0, OUTER);
-  ringG.addColorStop(0, '#F3F6EE');
-  ringG.addColorStop(1, '#E7ECE8');
-  wctx.beginPath(); wctx.arc(0, 0, OUTER, 0, Math.PI * 2);
-  wctx.fillStyle = ringG; wctx.fill();
-
-  // ── Thin sage separator between ring and sectors ──
-  wctx.beginPath(); wctx.arc(0, 0, CREAM_R, 0, Math.PI * 2);
-  wctx.strokeStyle = 'rgba(20,33,26,0.08)';
-  wctx.lineWidth = 1.5; wctx.stroke();
 
   // ── Rotating sectors ──
   wctx.save();
@@ -369,7 +355,6 @@ function drawWheel(rot) {
       wctx.restore();
     } else {
       const shades = SHADE_BY_UNITS[sec.units][sec.units === 4 ? (shadeIdx4++ % 2) : (shadeIdx3++ % 2)];
-      const mx = Math.cos(mid), my = Math.sin(mid);
       // Radial from centre for a soft, glowing centre
       const g = wctx.createRadialGradient(0, 0, R * 0.15, 0, 0, R);
       g.addColorStop(0, shades[0]);
@@ -378,16 +363,6 @@ function drawWheel(rot) {
       wctx.arc(0, 0, R, sa, ea); wctx.closePath();
       wctx.fillStyle = g; wctx.fill();
     }
-
-    // Subtle inner rim highlight
-    wctx.save();
-    wctx.globalAlpha = 0.22;
-    wctx.beginPath();
-    wctx.arc(0, 0, R * 0.97, sa, ea);
-    wctx.arc(0, 0, R * 0.82, ea, sa, true);
-    wctx.closePath();
-    wctx.fillStyle = '#ffffff'; wctx.fill();
-    wctx.restore();
 
     // Text: emoji + label (forest-green PayMoji text)
     wctx.save();
@@ -443,11 +418,6 @@ function drawWheel(rot) {
   wctx.restore(); // undo rotation
 
   // ── Centre hub (drawn last, no rotation) ──
-  // Outer cream halo
-  wctx.beginPath(); wctx.arc(0, 0, 42, 0, Math.PI * 2);
-  wctx.fillStyle = '#F3F6EE'; wctx.fill();
-  wctx.strokeStyle = 'rgba(20,33,26,0.08)'; wctx.lineWidth = 1.5; wctx.stroke();
-
   // White disc
   wctx.beginPath(); wctx.arc(0, 0, 34, 0, Math.PI * 2);
   wctx.fillStyle = '#ffffff'; wctx.fill();
