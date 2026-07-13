@@ -319,11 +319,6 @@ body {
             <div id="combosList"></div>
           </div>
 
-          <div class="qr-bottom-section">
-            <div class="section-label">Scan to redeem</div>
-            <div class="qr-bottom-grid" id="qrBottomGrid"></div>
-          </div>
-
           <button class="btn validate-btn" onclick="validate()">✓  Validate &amp; Redeem</button>
         </div>
       </div>
@@ -637,7 +632,6 @@ function onSpinEnd(final) {
 function showResult() {
   document.getElementById('wonAmountDisplay').textContent = fmtVND(wonAmount);
   buildCombos(wonAmount);
-  buildQRGrid(wonAmount);
   document.getElementById('resultEmpty').style.display = 'none';
   const won = document.getElementById('resultWon');
   won.classList.remove('visible'); void won.offsetWidth; won.classList.add('visible');
