@@ -794,14 +794,11 @@ function scheduleSpotlight() {
 setTimeout(scheduleSpotlight, 1500);
 
 // ═══════════ SCOOTER DRIVE-BY ═══════════
-// Every so often a Grab-style scooter zips across the screen.
+// Every so often a Grab-style scooter zips across the screen (always L→R, facing forward).
 function launchScooter() {
   const el = document.createElement('div');
-  el.className = 'scooter';
+  el.className = 'scooter dir-right';
   el.innerHTML = '<span>🛵</span>';
-  const goingRight = Math.random() < 0.5;
-  el.classList.add(goingRight ? 'dir-right' : 'dir-left');
-  if (!goingRight) el.classList.add('rtl'); // flip so it faces travel direction
   const top = 80 + Math.random() * Math.max(50, window.innerHeight - 220);
   el.style.top = top + 'px';
   const dur = 5 + Math.random() * 3; // 5–8s to cross
