@@ -331,9 +331,32 @@ body > * { position: relative; z-index: 1; }
   box-shadow: 0 8px 30px rgba(143,202,43,0.55);
   transform: translateY(-1px);
 }
+
+/* Fullscreen toggle — floats top-right of viewport */
+.fs-btn {
+  position: fixed;
+  top: 18px; right: 18px;
+  width: 44px; height: 44px; border-radius: 50%;
+  border: none; cursor: pointer;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 4px 14px rgba(20,33,26,0.12);
+  color: #14211a;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+  transition: transform 0.12s, box-shadow 0.15s;
+  backdrop-filter: blur(6px);
+}
+.fs-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(20,33,26,0.18); }
+.fs-btn svg { width: 20px; height: 20px; }
+:fullscreen .fs-btn { background: rgba(255,255,255,0.7); }
 </style>
 </head>
 <body>
+<button class="fs-btn" id="fsBtn" onclick="toggleFullscreen()" title="Toggle fullscreen (F11)">
+  <svg id="fsIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
+  </svg>
+</button>
 <div class="app">
   <div class="app-grid">
 
@@ -646,6 +669,42 @@ function validate() {
 // ═══════════ FORMAT & INIT ═══════════
 function fmtVND(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
 drawWheel(0);
+
+// ═══════════ FULLSCREEN + WAKE LOCK ═══════════
+let wakeLock = null;
+async function requestWakeLock() {
+  if ('wakeLock' in navigator) {
+    try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+  }
+}
+function releaseWakeLock() {
+  if (wakeLock) { wakeLock.release(); wakeLock = null; }
+}
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen();
+  }
+}
+document.addEventListener('fullscreenchange', () => {
+  const icon = document.getElementById('fsIcon');
+  if (document.fullscreenElement) {
+    // "exit fullscreen" icon (arrows pointing inward)
+    icon.innerHTML = '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>';
+    requestWakeLock();
+  } else {
+    // "enter fullscreen" icon (arrows pointing outward)
+    icon.innerHTML = '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>';
+    releaseWakeLock();
+  }
+});
+// Re-acquire wake lock if user tabs away and back
+document.addEventListener('visibilitychange', () => {
+  if (document.fullscreenElement && document.visibilityState === 'visible') {
+    requestWakeLock();
+  }
+});
 </script>
 </body>
 </html>
