@@ -30,54 +30,48 @@ body {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  opacity: 0.12;
 }
 .bg-row {
   height: 130px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120' width='120' height='120'><g transform='translate(60 60) rotate(-12)'><path d='M -40 -10 C -46 -34 -18 -46 8 -44 C 36 -42 46 -22 44 4 C 42 26 22 42 -4 40 C -32 38 -34 14 -40 -10 Z' fill='%23FDC231'/><path d='M -42 -6 C -50 -30 -22 -44 4 -44' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -30 -18 C -18 -30 6 -32 20 -26' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -22 0 C -6 -4 16 -2 30 4' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -14 18 C 4 15 22 20 34 24' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><circle cx='6' cy='-18' r='1.5' fill='white'/></g></svg>");
-  background-repeat: repeat-x;
-  background-size: 130px 130px;
-  background-position: 0 center;
-  will-change: background-position;
+  display: flex;
+  will-change: transform;
+  align-items: center;
 }
-.bg-row.dir-right { animation: bgSlideRight 35s linear infinite; }
-.bg-row.dir-left  { animation: bgSlideLeft  35s linear infinite; }
+.bg-row.dir-right { animation: rowSlideRight 35s linear infinite; }
+.bg-row.dir-left  { animation: rowSlideLeft  35s linear infinite; }
 /* Slightly different speeds per row for a more organic drift */
 .bg-row:nth-child(4n)   { animation-duration: 46s; }
 .bg-row:nth-child(4n+1) { animation-duration: 28s; }
 .bg-row:nth-child(4n+2) { animation-duration: 40s; }
 
-@keyframes bgSlideRight {
-  from { background-position-x: 0; }
-  to   { background-position-x: 260px; }
+@keyframes rowSlideRight {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
 }
-@keyframes bgSlideLeft {
-  from { background-position-x: 0; }
-  to   { background-position-x: -260px; }
+@keyframes rowSlideLeft {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.croissant {
+  flex: 0 0 130px;
+  width: 130px; height: 130px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120' width='120' height='120'><g transform='translate(60 60) rotate(-12)'><path d='M -40 -10 C -46 -34 -18 -46 8 -44 C 36 -42 46 -22 44 4 C 42 26 22 42 -4 40 C -32 38 -34 14 -40 -10 Z' fill='%23FDC231'/><path d='M -42 -6 C -50 -30 -22 -44 4 -44' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -30 -18 C -18 -30 6 -32 20 -26' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -22 0 C -6 -4 16 -2 30 4' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -14 18 C 4 15 22 20 34 24' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><circle cx='6' cy='-18' r='1.5' fill='white'/></g></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.12;
+  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(.22,1,.36,1), filter 0.6s ease;
+}
+.croissant.highlight {
+  opacity: 1;
+  transform: scale(1.35);
+  filter: drop-shadow(0 10px 26px rgba(255,122,89,0.6)) drop-shadow(0 2px 6px rgba(0,0,0,0.18));
+  z-index: 5;
 }
 
 body > * { position: relative; z-index: 1; }
 .bg-wallpaper { z-index: 0; }
-
-/* Random spotlight croissant — pops in at a random spot, then fades */
-.spotlight {
-  position: fixed;
-  width: 96px; height: 96px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120' width='120' height='120'><g transform='translate(60 60) rotate(-12)'><path d='M -40 -10 C -46 -34 -18 -46 8 -44 C 36 -42 46 -22 44 4 C 42 26 22 42 -4 40 C -32 38 -34 14 -40 -10 Z' fill='%23FDC231'/><path d='M -42 -6 C -50 -30 -22 -44 4 -44' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -30 -18 C -18 -30 6 -32 20 -26' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -22 0 C -6 -4 16 -2 30 4' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -14 18 C 4 15 22 20 34 24' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><circle cx='6' cy='-18' r='1.5' fill='white'/></g></svg>");
-  background-size: contain;
-  background-repeat: no-repeat;
-  opacity: 0;
-  z-index: 0;
-  pointer-events: none;
-  filter: drop-shadow(0 8px 24px rgba(255,122,89,0.55)) drop-shadow(0 2px 6px rgba(0,0,0,0.15));
-}
-.spotlight.pulse { animation: spotlightPulse 3.4s cubic-bezier(.22,1,.36,1) forwards; }
-@keyframes spotlightPulse {
-  0%   { opacity: 0; transform: scale(0.4) rotate(-30deg); }
-  18%  { opacity: 1; transform: scale(1.1) rotate(-8deg); }
-  55%  { opacity: 1; transform: scale(1) rotate(-8deg); }
-  100% { opacity: 0; transform: scale(0.95) rotate(-4deg); }
-}
 
 /* Confetti canvas — overlays on top of everything */
 #confettiCanvas {
@@ -401,7 +395,6 @@ body > * { position: relative; z-index: 1; }
 </head>
 <body>
 <div class="bg-wallpaper" id="bgWallpaper"></div>
-<div class="spotlight" id="spotlight"></div>
 <canvas id="confettiCanvas"></canvas>
 <button class="fs-btn" id="fsBtn" onclick="toggleFullscreen()" title="Toggle fullscreen (F11)">
   <svg id="fsIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -723,18 +716,25 @@ function fmtVND(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d
 drawWheel(0);
 
 // ═══════════ ANIMATED BACKGROUND ═══════════
-// Rotated container needs enough rows to cover the diagonal viewport diagonal.
+// Each row contains individual croissant elements so we can highlight one in place.
 function buildWallpaper() {
   const bg = document.getElementById('bgWallpaper');
   if (!bg) return;
+  const containerWidth  = bg.offsetWidth;
   const containerHeight = bg.offsetHeight;
   const rowCount = Math.ceil(containerHeight / 130) + 2;
+  const perSet   = Math.ceil(containerWidth / 130) + 2;
   bg.innerHTML = '';
   for (let i = 0; i < rowCount; i++) {
     const row = document.createElement('div');
     row.className = 'bg-row ' + (i % 2 === 0 ? 'dir-right' : 'dir-left');
-    // Randomize starting phase so rows aren't in lockstep
     row.style.animationDelay = (-Math.random() * 40) + 's';
+    // Two copies of the tile set → row is 2× wide so translateX(-50%) loops seamlessly
+    for (let j = 0; j < perSet * 2; j++) {
+      const c = document.createElement('div');
+      c.className = 'croissant';
+      row.appendChild(c);
+    }
     bg.appendChild(row);
   }
 }
@@ -745,23 +745,31 @@ window.addEventListener('resize', () => {
   _rebuildTimer = setTimeout(() => { buildWallpaper(); resizeConfetti(); }, 200);
 });
 
-// ═══════════ SPOTLIGHT CROISSANT ═══════════
-// Every few seconds pop a highlighted croissant somewhere on screen.
+// ═══════════ SPOTLIGHT — highlight an existing on-screen croissant ═══════════
 function popSpotlight() {
-  const el = document.getElementById('spotlight');
-  if (!el) return;
-  const margin = 60;
-  const x = margin + Math.random() * (window.innerWidth  - margin * 2 - 96);
-  const y = margin + Math.random() * (window.innerHeight - margin * 2 - 96);
-  el.style.left = x + 'px';
-  el.style.top  = y + 'px';
-  el.classList.remove('pulse');
-  void el.offsetWidth;   // restart animation
-  el.classList.add('pulse');
+  // Clear any previous highlight
+  document.querySelectorAll('.croissant.highlight').forEach(el => el.classList.remove('highlight'));
+  const all = document.querySelectorAll('.bg-row .croissant');
+  if (all.length === 0) return;
+  // Only pick from croissants currently on screen (accounting for row transform + wallpaper rotation)
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const visible = [];
+  for (const el of all) {
+    const r = el.getBoundingClientRect();
+    // Require croissant to be fully inside the viewport with a little margin
+    if (r.left > 40 && r.top > 40 && r.right < vw - 40 && r.bottom < vh - 40) {
+      visible.push(el);
+    }
+  }
+  if (visible.length === 0) return;
+  const target = visible[Math.floor(Math.random() * visible.length)];
+  target.classList.add('highlight');
+  // Remove highlight after ~2.4s (fades via CSS transition)
+  setTimeout(() => target.classList.remove('highlight'), 2400);
 }
 function scheduleSpotlight() {
   popSpotlight();
-  const nextIn = 2800 + Math.random() * 2500; // 2.8–5.3s between pops
+  const nextIn = 2800 + Math.random() * 2500; // 2.8–5.3s
   setTimeout(scheduleSpotlight, nextIn);
 }
 setTimeout(scheduleSpotlight, 1500);
