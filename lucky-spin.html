@@ -80,6 +80,25 @@ body > * { position: relative; z-index: 1; }
   pointer-events: none;
 }
 
+/* Grab scooter drive-by — occasional emoji zips across the screen */
+.scooter {
+  position: fixed;
+  left: 0; top: 0;
+  font-size: 68px;
+  z-index: 5;
+  pointer-events: none;
+  will-change: left, transform;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.18));
+  line-height: 1;
+}
+.scooter span { display: inline-block; }
+.scooter.rtl span { transform: scaleX(-1); }
+.scooter.dir-right { animation: scoot-right var(--dur, 6s) linear forwards, scoot-bob 0.5s ease-in-out infinite; }
+.scooter.dir-left  { animation: scoot-left  var(--dur, 6s) linear forwards, scoot-bob 0.5s ease-in-out infinite; }
+@keyframes scoot-right { from { left: -140px; } to { left: calc(100vw + 40px); } }
+@keyframes scoot-left  { from { left: calc(100vw + 40px); } to { left: -140px; } }
+@keyframes scoot-bob   { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
 /* ═══ Card / Grid ═══ */
 .app {
   background: #fafcfa;
@@ -773,6 +792,29 @@ function scheduleSpotlight() {
   setTimeout(scheduleSpotlight, nextIn);
 }
 setTimeout(scheduleSpotlight, 1500);
+
+// ═══════════ SCOOTER DRIVE-BY ═══════════
+// Every so often a Grab-style scooter zips across the screen.
+function launchScooter() {
+  const el = document.createElement('div');
+  el.className = 'scooter';
+  el.innerHTML = '<span>🛵</span>';
+  const goingRight = Math.random() < 0.5;
+  el.classList.add(goingRight ? 'dir-right' : 'dir-left');
+  if (!goingRight) el.classList.add('rtl'); // flip so it faces travel direction
+  const top = 80 + Math.random() * Math.max(50, window.innerHeight - 220);
+  el.style.top = top + 'px';
+  const dur = 5 + Math.random() * 3; // 5–8s to cross
+  el.style.setProperty('--dur', dur + 's');
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), dur * 1000 + 300);
+}
+function scheduleScooter() {
+  launchScooter();
+  const nextIn = 14000 + Math.random() * 22000; // 14–36s between rides
+  setTimeout(scheduleScooter, nextIn);
+}
+setTimeout(scheduleScooter, 6000);
 
 // ═══════════ CONFETTI ═══════════
 const confettiCanvas = document.getElementById('confettiCanvas');
