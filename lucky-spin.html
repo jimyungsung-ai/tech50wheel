@@ -297,7 +297,12 @@ const SECTOR_DEFS = [
   { value: 250000, units: 1.5 },
 ];
 const TOTAL_UNITS = SECTOR_DEFS.reduce((s, d) => s + d.units, 0);
-let _cum = 0;
+// Shift so the jackpot sector's MIDPOINT sits at the top (under the pointer) at rest.
+// Jackpot is the last sector; its centre falls at (sumOfPrev + jackpot/2) units.
+const JACKPOT_UNITS = SECTOR_DEFS[SECTOR_DEFS.length - 1].units;
+const PREV_UNITS    = TOTAL_UNITS - JACKPOT_UNITS;
+const SECTOR_SHIFT  = 2 * Math.PI * (1 - (PREV_UNITS + JACKPOT_UNITS / 2) / TOTAL_UNITS);
+let _cum = SECTOR_SHIFT;
 const sectors = SECTOR_DEFS.map((d, i) => {
   const span = (d.units / TOTAL_UNITS) * 2 * Math.PI;
   const start = _cum; _cum += span;
@@ -349,26 +354,26 @@ function drawWheel(rot) {
 
     // Fill
     if (sec.value === 250000) {
-      // 🏆 JACKPOT — vivid gold with strong glow
+      // 🏆 JACKPOT — vivid magenta with strong glow
       wctx.save();
-      wctx.shadowColor = 'rgba(215,154,46,0.9)';
+      wctx.shadowColor = 'rgba(255,79,168,0.85)';
       wctx.shadowBlur  = 28;
       const jg = wctx.createRadialGradient(0, 0, 8, 0, 0, R);
-      jg.addColorStop(0,    '#FFF3B0');
-      jg.addColorStop(0.45, '#FFC94A');
-      jg.addColorStop(1,    '#C97A0A');
+      jg.addColorStop(0,    '#FFE0EE');
+      jg.addColorStop(0.45, '#FF4FA8');
+      jg.addColorStop(1,    '#A01067');
       wctx.beginPath(); wctx.moveTo(0, 0);
       wctx.arc(0, 0, R, sa, ea); wctx.closePath();
       wctx.fillStyle = jg; wctx.fill();
       wctx.restore();
 
-      // Golden arc highlight on the outer rim of the jackpot sector
+      // Bright pink highlight arc on the outer rim of the jackpot sector
       wctx.save();
       wctx.beginPath();
       wctx.arc(0, 0, R - 3, sa + 0.02, ea - 0.02);
-      wctx.strokeStyle = '#FFE27A';
+      wctx.strokeStyle = '#FFC7DE';
       wctx.lineWidth = 4;
-      wctx.shadowColor = 'rgba(255,200,0,0.9)';
+      wctx.shadowColor = 'rgba(255,120,190,0.95)';
       wctx.shadowBlur = 10;
       wctx.stroke();
       wctx.restore();
@@ -391,7 +396,7 @@ function drawWheel(rot) {
     wctx.font = '800 19px -apple-system,sans-serif';
 
     if (sec.value === 250000) {
-      wctx.fillStyle = '#3A2000';
+      wctx.fillStyle = '#ffffff';
       wctx.fillText('250.000₫', R - 14, 0);
     } else if (sec.units === 4) {
       wctx.fillStyle = '#14211a';
@@ -437,8 +442,19 @@ function drawWheel(rot) {
 }
 
 function getSectorAtPointer(rot) {
-  const rel = ((-rot) % (2*Math.PI) + 2*Math.PI) % (2*Math.PI);
-  return sectors.find(s => rel >= s.startAngle && rel < s.startAngle + s.spanAngle) || sectors[0];
+  const TAU = 2 * Math.PI;
+  const rel = ((-rot) % TAU + TAU) % TAU;
+  for (const s of sectors) {
+    const a = ((s.startAngle % TAU) + TAU) % TAU;
+    const b = a + s.spanAngle;
+    if (b <= TAU) {
+      if (rel >= a && rel < b) return s;
+    } else {
+      // Sector wraps across 2π (e.g. the jackpot at the top)
+      if (rel >= a || rel < b - TAU) return s;
+    }
+  }
+  return sectors[0];
 }
 
 // ═══════════ QR CODES ═══════════
