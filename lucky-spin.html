@@ -794,10 +794,11 @@ function scheduleSpotlight() {
 setTimeout(scheduleSpotlight, 1500);
 
 // ═══════════ SCOOTER DRIVE-BY ═══════════
-// Every so often a Grab-style scooter zips across the screen (always L→R, facing forward).
+// Every so often a Grab-style scooter zips across the screen.
+// 🛵 emoji faces left on most systems, so we drive R→L to match its orientation.
 function launchScooter() {
   const el = document.createElement('div');
-  el.className = 'scooter dir-right';
+  el.className = 'scooter dir-left';
   el.innerHTML = '<span>🛵</span>';
   const top = 80 + Math.random() * Math.max(50, window.innerHeight - 220);
   el.style.top = top + 'px';
