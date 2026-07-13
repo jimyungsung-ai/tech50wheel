@@ -67,14 +67,14 @@ body {
 }
 .wheel-wrapper { position: relative; }
 .pointer {
-  position: absolute; top: -14px; left: 50%;
+  position: absolute; top: -8px; left: 50%;
   transform: translateX(-50%);
   width: 0; height: 0;
-  border-left: 18px solid transparent;
-  border-right: 18px solid transparent;
-  border-top: 40px solid #FFD700;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-top: 34px solid #14211a;
   z-index: 10;
-  filter: drop-shadow(0 3px 10px rgba(140,90,0,0.55)) drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+  filter: drop-shadow(0 4px 10px rgba(20,33,26,0.25));
 }
 .pointer.bounce { animation: pb 0.4s cubic-bezier(.36,.07,.19,.97); }
 @keyframes pb {
@@ -85,7 +85,9 @@ body {
 }
 #wheelCanvas {
   display: block; border-radius: 50%;
-  box-shadow: 0 18px 64px rgba(0,0,0,0.28), 0 4px 18px rgba(80,40,160,0.14);
+  box-shadow:
+    0 20px 60px rgba(20,33,26,0.12),
+    0 4px 18px rgba(163,221,58,0.14);
 }
 .center-hub { display: none; }
 
@@ -302,19 +304,26 @@ const sectors = SECTOR_DEFS.map((d, i) => {
   return { ...d, startAngle: start, spanAngle: span };
 });
 
-// Colors keyed by sector width (keeps visual distinction even though both show 50K)
+// PayMoji pastel palette — soft washes, smooth gradients
+// Wide (4-unit) sectors → mint/lime; medium (3-unit) → lilac & pink (alternating)
 const SHADE_BY_UNITS = {
-  4: [['#B8EAC8','#90D4A8'],['#A4E0B6','#7EC99C']],
-  3: [['#B8D6FF','#8BBEFF'],['#9EC8FF','#72AEFF']],
+  4: [
+    ['#F4FADD', '#D9EE9E'],   // pale mint → chartreuse wash
+    ['#EFF7CC', '#C6E480'],
+  ],
+  3: [
+    ['#FBF2FF', '#DECBFF'],   // pale lilac → lavender
+    ['#FFF2FA', '#F7CFE3'],   // pale pink → rose
+  ],
 };
 
 // ═══════════ WHEEL DRAWING ═══════════
 const wc   = document.getElementById('wheelCanvas');
 const wctx = wc.getContext('2d');
 const CX = wc.width / 2, CY = wc.height / 2;
-const OUTER  = CX - 5;       // 225 — outer ring outer edge
-const GOLD_R = OUTER - 24;   // 201 — gold trim ring
-const R      = GOLD_R - 9;   // 192 — sector drawing radius
+const OUTER  = CX - 6;       // 224 — outer ring outer edge
+const CREAM_R = OUTER - 18;  // 206 — cream band
+const R      = CREAM_R - 6;  // 200 — sector drawing radius
 const BASE_ANGLE = -Math.PI / 2;
 
 function drawWheel(rot) {
@@ -322,27 +331,23 @@ function drawWheel(rot) {
   wctx.save();
   wctx.translate(CX, CY);
 
-  // ── Outer ring (dark green radial gradient) ──
-  const ringG = wctx.createRadialGradient(0, 0, GOLD_R - 2, 0, 0, OUTER);
-  ringG.addColorStop(0, '#1E6B42');
-  ringG.addColorStop(1, '#0A3D22');
+  // ── Outer cream ring ──
+  const ringG = wctx.createRadialGradient(0, 0, CREAM_R, 0, 0, OUTER);
+  ringG.addColorStop(0, '#F3F6EE');
+  ringG.addColorStop(1, '#E7ECE8');
   wctx.beginPath(); wctx.arc(0, 0, OUTER, 0, Math.PI * 2);
   wctx.fillStyle = ringG; wctx.fill();
 
-  // ── Gold trim stroke ──
-  const goldG = wctx.createLinearGradient(-GOLD_R, -GOLD_R, GOLD_R, GOLD_R);
-  goldG.addColorStop(0,    '#8B6914');
-  goldG.addColorStop(0.25, '#FFE566');
-  goldG.addColorStop(0.5,  '#FFB800');
-  goldG.addColorStop(0.75, '#FFE566');
-  goldG.addColorStop(1,    '#8B6914');
-  wctx.beginPath(); wctx.arc(0, 0, GOLD_R, 0, Math.PI * 2);
-  wctx.strokeStyle = goldG; wctx.lineWidth = 7; wctx.stroke();
+  // ── Thin sage separator between ring and sectors ──
+  wctx.beginPath(); wctx.arc(0, 0, CREAM_R, 0, Math.PI * 2);
+  wctx.strokeStyle = 'rgba(20,33,26,0.08)';
+  wctx.lineWidth = 1.5; wctx.stroke();
 
   // ── Rotating sectors ──
   wctx.save();
   wctx.rotate(rot);
 
+  let shadeIdx4 = 0, shadeIdx3 = 0;
   sectors.forEach((sec) => {
     const sa  = BASE_ANGLE + sec.startAngle;
     const ea  = sa + sec.spanAngle;
@@ -350,67 +355,55 @@ function drawWheel(rot) {
 
     // Fill
     if (sec.value === 250000) {
-      // 🏆 JACKPOT — gold core → fiery red-crimson edge
+      // 🏆 JACKPOT — warm gold-cream wash with subtle glow
       wctx.save();
-      wctx.shadowColor = 'rgba(255, 190, 0, 0.85)';
-      wctx.shadowBlur  = 22;
-      const jg = wctx.createRadialGradient(0, 0, 14, 0, 0, R);
-      jg.addColorStop(0,    '#FFE566');
-      jg.addColorStop(0.3,  '#FF9A00');
-      jg.addColorStop(0.72, '#E83030');
-      jg.addColorStop(1,    '#8B0000');
+      wctx.shadowColor = 'rgba(215,154,46,0.55)';
+      wctx.shadowBlur  = 16;
+      const jg = wctx.createRadialGradient(0, 0, 10, 0, 0, R);
+      jg.addColorStop(0,    '#FFF6DC');
+      jg.addColorStop(0.55, '#F5D98A');
+      jg.addColorStop(1,    '#D79A2E');
       wctx.beginPath(); wctx.moveTo(0, 0);
       wctx.arc(0, 0, R, sa, ea); wctx.closePath();
       wctx.fillStyle = jg; wctx.fill();
       wctx.restore();
-    } else if (sec.units === 4) {
-      // Vibrant emerald green
-      const mx = Math.cos(mid), my = Math.sin(mid);
-      const gg2 = wctx.createLinearGradient(mx*R*0.1, my*R*0.1, mx*R, my*R);
-      gg2.addColorStop(0, '#52D68A');
-      gg2.addColorStop(1, '#0D6B35');
-      wctx.beginPath(); wctx.moveTo(0, 0);
-      wctx.arc(0, 0, R, sa, ea); wctx.closePath();
-      wctx.fillStyle = gg2; wctx.fill();
     } else {
-      // Deep purple / indigo
+      const shades = SHADE_BY_UNITS[sec.units][sec.units === 4 ? (shadeIdx4++ % 2) : (shadeIdx3++ % 2)];
       const mx = Math.cos(mid), my = Math.sin(mid);
-      const pg = wctx.createLinearGradient(mx*R*0.1, my*R*0.1, mx*R, my*R);
-      pg.addColorStop(0, '#AC7EFF');
-      pg.addColorStop(1, '#4218A0');
+      // Radial from centre for a soft, glowing centre
+      const g = wctx.createRadialGradient(0, 0, R * 0.15, 0, 0, R);
+      g.addColorStop(0, shades[0]);
+      g.addColorStop(1, shades[1]);
       wctx.beginPath(); wctx.moveTo(0, 0);
       wctx.arc(0, 0, R, sa, ea); wctx.closePath();
-      wctx.fillStyle = pg; wctx.fill();
+      wctx.fillStyle = g; wctx.fill();
     }
 
-    // Subtle outer shine arc
+    // Subtle inner rim highlight
     wctx.save();
-    wctx.globalAlpha = 0.13;
+    wctx.globalAlpha = 0.22;
     wctx.beginPath();
-    wctx.arc(0, 0, R * 0.95, sa, ea);
-    wctx.arc(0, 0, R * 0.74, ea, sa, true);
+    wctx.arc(0, 0, R * 0.97, sa, ea);
+    wctx.arc(0, 0, R * 0.82, ea, sa, true);
     wctx.closePath();
     wctx.fillStyle = '#ffffff'; wctx.fill();
     wctx.restore();
 
-    // Text: emoji + label
+    // Text: emoji + label (forest-green PayMoji text)
     wctx.save();
     wctx.rotate(mid);
     wctx.textBaseline = 'middle';
 
     if (sec.value === 250000) {
-      wctx.shadowColor = 'rgba(0,0,0,0.45)'; wctx.shadowBlur = 5;
       // emoji
       wctx.textAlign = 'center';
       wctx.font = '13px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
       wctx.fillText('👕', R * 0.46, 0);
       // label
-      wctx.font = '700 13px -apple-system,sans-serif';
-      wctx.fillStyle = '#FFF5CC';
-      wctx.shadowColor = 'rgba(120,40,0,0.6)'; wctx.shadowBlur = 7;
+      wctx.font = '800 13px -apple-system,sans-serif';
+      wctx.fillStyle = '#6E4A0F';
       wctx.fillText('250K', R * 0.80, 0);
     } else if (sec.units === 4) {
-      wctx.shadowColor = 'rgba(0,0,0,0.35)'; wctx.shadowBlur = 5;
       // emoji
       wctx.textAlign = 'center';
       wctx.font = '22px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
@@ -418,10 +411,9 @@ function drawWheel(rot) {
       // label
       wctx.textAlign = 'right';
       wctx.font = '800 21px -apple-system,sans-serif';
-      wctx.fillStyle = '#ffffff';
-      wctx.fillText('50K', R - 13, 0);
+      wctx.fillStyle = '#14211a';
+      wctx.fillText('50K', R - 14, 0);
     } else {
-      wctx.shadowColor = 'rgba(0,0,0,0.35)'; wctx.shadowBlur = 5;
       // emoji
       wctx.textAlign = 'center';
       wctx.font = '20px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
@@ -429,16 +421,16 @@ function drawWheel(rot) {
       // label
       wctx.textAlign = 'right';
       wctx.font = '800 18px -apple-system,sans-serif';
-      wctx.fillStyle = '#ffffff';
+      wctx.fillStyle = '#3A2560';
       wctx.fillText('50K', R - 12, 0);
     }
     wctx.restore();
   });
 
-  // ── White spoke lines at each sector boundary ──
+  // ── Thin white spoke lines at each sector boundary ──
   wctx.save();
-  wctx.strokeStyle = 'rgba(255,255,255,0.42)';
-  wctx.lineWidth = 2.5;
+  wctx.strokeStyle = 'rgba(255,255,255,0.75)';
+  wctx.lineWidth = 2;
   sectors.forEach(sec => {
     const angle = BASE_ANGLE + sec.startAngle;
     wctx.beginPath();
@@ -451,30 +443,24 @@ function drawWheel(rot) {
   wctx.restore(); // undo rotation
 
   // ── Centre hub (drawn last, no rotation) ──
-  // Outer white halo
-  wctx.beginPath(); wctx.arc(0, 0, 44, 0, Math.PI * 2);
-  wctx.fillStyle = '#fff'; wctx.fill();
-  wctx.strokeStyle = 'rgba(0,0,0,0.06)'; wctx.lineWidth = 2; wctx.stroke();
+  // Outer cream halo
+  wctx.beginPath(); wctx.arc(0, 0, 42, 0, Math.PI * 2);
+  wctx.fillStyle = '#F3F6EE'; wctx.fill();
+  wctx.strokeStyle = 'rgba(20,33,26,0.08)'; wctx.lineWidth = 1.5; wctx.stroke();
 
-  // Dark green disc
-  const hg = wctx.createRadialGradient(-9, -9, 0, 0, 0, 36);
-  hg.addColorStop(0, '#2E8A55'); hg.addColorStop(1, '#0A3D22');
-  wctx.beginPath(); wctx.arc(0, 0, 36, 0, Math.PI * 2);
-  wctx.fillStyle = hg; wctx.fill();
+  // White disc
+  wctx.beginPath(); wctx.arc(0, 0, 34, 0, Math.PI * 2);
+  wctx.fillStyle = '#ffffff'; wctx.fill();
 
-  // Gold ring around hub
-  wctx.beginPath(); wctx.arc(0, 0, 36, 0, Math.PI * 2);
-  wctx.strokeStyle = '#C8A020'; wctx.lineWidth = 2; wctx.stroke();
-
-  // Purple centre dot
-  const dg = wctx.createRadialGradient(-4, -4, 0, 0, 0, 18);
-  dg.addColorStop(0, '#B585FF'); dg.addColorStop(1, '#4218A0');
-  wctx.beginPath(); wctx.arc(0, 0, 18, 0, Math.PI * 2);
+  // Lime centre with gradient
+  const dg = wctx.createRadialGradient(-4, -4, 0, 0, 0, 20);
+  dg.addColorStop(0, '#D3F088'); dg.addColorStop(1, '#A3DD3A');
+  wctx.beginPath(); wctx.arc(0, 0, 20, 0, Math.PI * 2);
   wctx.fillStyle = dg; wctx.fill();
 
-  // Shine spot
-  wctx.beginPath(); wctx.arc(-5, -5, 8, 0, Math.PI * 2);
-  wctx.fillStyle = 'rgba(255,255,255,0.28)'; wctx.fill();
+  // Soft shine
+  wctx.beginPath(); wctx.arc(-4, -4, 8, 0, Math.PI * 2);
+  wctx.fillStyle = 'rgba(255,255,255,0.45)'; wctx.fill();
 
   wctx.restore();
 }
