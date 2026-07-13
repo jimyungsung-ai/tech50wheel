@@ -380,19 +380,19 @@ function drawWheel(rot) {
     wctx.rotate(mid);
     wctx.textBaseline = 'middle';
     wctx.textAlign = 'right';
-    wctx.font = '800 22px -apple-system,sans-serif';
+    wctx.font = '800 19px -apple-system,sans-serif';
 
     if (sec.value === 250000) {
       wctx.fillStyle = '#3A2000';
       wctx.shadowColor = 'rgba(255,220,120,0.9)';
       wctx.shadowBlur = 6;
-      wctx.fillText('250K', R - 14, 0);
+      wctx.fillText('250.000₫', R - 14, 0);
     } else if (sec.units === 4) {
       wctx.fillStyle = '#14211a';
-      wctx.fillText('50K', R - 14, 0);
+      wctx.fillText('50.000₫', R - 14, 0);
     } else {
       wctx.fillStyle = '#3A2560';
-      wctx.fillText('50K', R - 14, 0);
+      wctx.fillText('50.000₫', R - 14, 0);
     }
     wctx.restore();
   });
