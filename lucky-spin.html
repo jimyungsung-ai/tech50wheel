@@ -40,12 +40,12 @@ body {
   background-position: 0 center;
   will-change: background-position;
 }
-.bg-row.dir-right { animation: bgSlideRight 55s linear infinite; }
-.bg-row.dir-left  { animation: bgSlideLeft  55s linear infinite; }
+.bg-row.dir-right { animation: bgSlideRight 35s linear infinite; }
+.bg-row.dir-left  { animation: bgSlideLeft  35s linear infinite; }
 /* Slightly different speeds per row for a more organic drift */
-.bg-row:nth-child(4n)   { animation-duration: 70s; }
-.bg-row:nth-child(4n+1) { animation-duration: 45s; }
-.bg-row:nth-child(4n+2) { animation-duration: 60s; }
+.bg-row:nth-child(4n)   { animation-duration: 46s; }
+.bg-row:nth-child(4n+1) { animation-duration: 28s; }
+.bg-row:nth-child(4n+2) { animation-duration: 40s; }
 
 @keyframes bgSlideRight {
   from { background-position-x: 0; }
@@ -58,6 +58,33 @@ body {
 
 body > * { position: relative; z-index: 1; }
 .bg-wallpaper { z-index: 0; }
+
+/* Random spotlight croissant — pops in at a random spot, then fades */
+.spotlight {
+  position: fixed;
+  width: 96px; height: 96px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120' width='120' height='120'><g transform='translate(60 60) rotate(-12)'><path d='M -40 -10 C -46 -34 -18 -46 8 -44 C 36 -42 46 -22 44 4 C 42 26 22 42 -4 40 C -32 38 -34 14 -40 -10 Z' fill='%23FDC231'/><path d='M -42 -6 C -50 -30 -22 -44 4 -44' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -30 -18 C -18 -30 6 -32 20 -26' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -22 0 C -6 -4 16 -2 30 4' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><path d='M -14 18 C 4 15 22 20 34 24' fill='none' stroke='%23F27958' stroke-width='2.5' stroke-linecap='round'/><circle cx='6' cy='-18' r='1.5' fill='white'/></g></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 24px rgba(255,122,89,0.55)) drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+}
+.spotlight.pulse { animation: spotlightPulse 3.4s cubic-bezier(.22,1,.36,1) forwards; }
+@keyframes spotlightPulse {
+  0%   { opacity: 0; transform: scale(0.4) rotate(-30deg); }
+  18%  { opacity: 1; transform: scale(1.1) rotate(-8deg); }
+  55%  { opacity: 1; transform: scale(1) rotate(-8deg); }
+  100% { opacity: 0; transform: scale(0.95) rotate(-4deg); }
+}
+
+/* Confetti canvas — overlays on top of everything */
+#confettiCanvas {
+  position: fixed; inset: 0;
+  z-index: 200;
+  pointer-events: none;
+}
 
 /* ═══ Card / Grid ═══ */
 .app {
@@ -374,6 +401,8 @@ body > * { position: relative; z-index: 1; }
 </head>
 <body>
 <div class="bg-wallpaper" id="bgWallpaper"></div>
+<div class="spotlight" id="spotlight"></div>
+<canvas id="confettiCanvas"></canvas>
 <button class="fs-btn" id="fsBtn" onclick="toggleFullscreen()" title="Toggle fullscreen (F11)">
   <svg id="fsIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
@@ -678,6 +707,7 @@ function showResult() {
   document.getElementById('resultEmpty').style.display = 'none';
   const won = document.getElementById('resultWon');
   won.classList.remove('visible'); void won.offsetWidth; won.classList.add('visible');
+  launchConfetti();
 }
 
 // ═══════════ VALIDATE ═══════════
@@ -697,14 +727,14 @@ drawWheel(0);
 function buildWallpaper() {
   const bg = document.getElementById('bgWallpaper');
   if (!bg) return;
-  const containerHeight = bg.offsetHeight;         // already grown 30% each side
+  const containerHeight = bg.offsetHeight;
   const rowCount = Math.ceil(containerHeight / 130) + 2;
   bg.innerHTML = '';
   for (let i = 0; i < rowCount; i++) {
     const row = document.createElement('div');
     row.className = 'bg-row ' + (i % 2 === 0 ? 'dir-right' : 'dir-left');
     // Randomize starting phase so rows aren't in lockstep
-    row.style.animationDelay = (-Math.random() * 55) + 's';
+    row.style.animationDelay = (-Math.random() * 40) + 's';
     bg.appendChild(row);
   }
 }
@@ -712,8 +742,117 @@ buildWallpaper();
 let _rebuildTimer;
 window.addEventListener('resize', () => {
   clearTimeout(_rebuildTimer);
-  _rebuildTimer = setTimeout(buildWallpaper, 200);
+  _rebuildTimer = setTimeout(() => { buildWallpaper(); resizeConfetti(); }, 200);
 });
+
+// ═══════════ SPOTLIGHT CROISSANT ═══════════
+// Every few seconds pop a highlighted croissant somewhere on screen.
+function popSpotlight() {
+  const el = document.getElementById('spotlight');
+  if (!el) return;
+  const margin = 60;
+  const x = margin + Math.random() * (window.innerWidth  - margin * 2 - 96);
+  const y = margin + Math.random() * (window.innerHeight - margin * 2 - 96);
+  el.style.left = x + 'px';
+  el.style.top  = y + 'px';
+  el.classList.remove('pulse');
+  void el.offsetWidth;   // restart animation
+  el.classList.add('pulse');
+}
+function scheduleSpotlight() {
+  popSpotlight();
+  const nextIn = 2800 + Math.random() * 2500; // 2.8–5.3s between pops
+  setTimeout(scheduleSpotlight, nextIn);
+}
+setTimeout(scheduleSpotlight, 1500);
+
+// ═══════════ CONFETTI ═══════════
+const confettiCanvas = document.getElementById('confettiCanvas');
+const cctx = confettiCanvas.getContext('2d');
+let confettiParticles = [];
+function resizeConfetti() {
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  confettiCanvas.width  = window.innerWidth  * dpr;
+  confettiCanvas.height = window.innerHeight * dpr;
+  confettiCanvas.style.width  = window.innerWidth  + 'px';
+  confettiCanvas.style.height = window.innerHeight + 'px';
+  cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resizeConfetti();
+
+const CONFETTI_COLORS = ['#A3DD3A', '#8FCA2B', '#FFCD4D', '#FF7A59', '#4E7FE0', '#9BBAFF', '#FF4FA8', '#FFE39A'];
+
+function launchConfetti() {
+  const W = window.innerWidth, H = window.innerHeight;
+  // Two bursts — from bottom-left and bottom-right — plus a top-down sprinkle
+  const bursts = [
+    { x: W * 0.15, y: H * 0.75, angle: -Math.PI/2 - 0.35, count: 90 },
+    { x: W * 0.85, y: H * 0.75, angle: -Math.PI/2 + 0.35, count: 90 },
+  ];
+  bursts.forEach(b => {
+    for (let i = 0; i < b.count; i++) {
+      const spread = 0.9; // radians
+      const dir = b.angle + (Math.random() - 0.5) * spread;
+      const speed = 8 + Math.random() * 10;
+      confettiParticles.push({
+        x: b.x, y: b.y,
+        vx: Math.cos(dir) * speed,
+        vy: Math.sin(dir) * speed,
+        w: 6 + Math.random() * 6,
+        h: 9 + Math.random() * 8,
+        rot: Math.random() * Math.PI * 2,
+        vrot: (Math.random() - 0.5) * 0.4,
+        color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+        life: 1,
+        drag: 0.985,
+        gravity: 0.28,
+      });
+    }
+  });
+  // Top-down sprinkle
+  for (let i = 0; i < 60; i++) {
+    confettiParticles.push({
+      x: Math.random() * W,
+      y: -20 - Math.random() * 40,
+      vx: (Math.random() - 0.5) * 3,
+      vy: 2 + Math.random() * 4,
+      w: 6 + Math.random() * 6,
+      h: 9 + Math.random() * 8,
+      rot: Math.random() * Math.PI * 2,
+      vrot: (Math.random() - 0.5) * 0.3,
+      color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+      life: 1,
+      drag: 0.995,
+      gravity: 0.18,
+    });
+  }
+  if (!confettiRunning) { confettiRunning = true; requestAnimationFrame(confettiFrame); }
+}
+
+let confettiRunning = false;
+function confettiFrame() {
+  cctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  const H = window.innerHeight;
+  for (let i = confettiParticles.length - 1; i >= 0; i--) {
+    const p = confettiParticles[i];
+    p.vx *= p.drag; p.vy = p.vy * p.drag + p.gravity;
+    p.x += p.vx; p.y += p.vy; p.rot += p.vrot;
+    if (p.y > H + 50) { p.life -= 0.03; }
+    if (p.life <= 0) { confettiParticles.splice(i, 1); continue; }
+    cctx.save();
+    cctx.translate(p.x, p.y); cctx.rotate(p.rot);
+    cctx.globalAlpha = Math.max(0, Math.min(1, p.life));
+    cctx.fillStyle = p.color;
+    cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    cctx.restore();
+  }
+  if (confettiParticles.length === 0) {
+    confettiRunning = false;
+    cctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    return;
+  }
+  requestAnimationFrame(confettiFrame);
+}
 
 // ═══════════ FULLSCREEN + WAKE LOCK ═══════════
 let wakeLock = null;
