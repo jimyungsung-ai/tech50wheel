@@ -3,67 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lucky Spin</title>
+<title>Tech50 × PayMoji — Lucky Spin</title>
 <style>
 :root { color-scheme: light; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: -apple-system, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
-  background: linear-gradient(145deg, #cdf5de 0%, #e9e4f8 100%);
+  background:
+    radial-gradient(900px 460px at 88% 8%, rgba(163,221,58,0.22), transparent 60%),
+    linear-gradient(150deg, #ECE7FF 0%, #FCEDF6 46%, #E9F4C9 100%);
   min-height: 100vh;
   display: flex; align-items: center; justify-content: center;
   padding: 32px 20px;
+  color: #14211a;
 }
 
-/* ═══ Card ═══ */
+/* ═══ Card / Grid ═══ */
 .app {
   background: #fafcfa;
   border-radius: 40px;
-  padding: 44px 48px 40px;
-  max-width: 620px; width: 100%;
+  padding: 40px 44px;
+  max-width: 1120px; width: 100%;
   box-shadow:
     0 32px 80px rgba(80,40,160,0.12),
     0 8px 24px rgba(0,0,0,0.05),
     inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
-/* ═══ Header ═══ */
-.header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 32px;
+.app-grid {
+  display: grid;
+  grid-template-columns: minmax(480px, 520px) 1fr;
+  gap: 56px;
+  align-items: center;
 }
-.brand {
-  font-size: 13px; font-weight: 700; letter-spacing: 1.5px;
-  text-transform: uppercase; color: #c8c8d0;
-}
-.brand-dot { color: #ccff00; }
 
-/* ═══ Prize Display ═══ */
-.prize-display {
-  text-align: center;
-  margin-bottom: 32px;
-  transition: transform 0.25s ease;
+@media (max-width: 960px) {
+  .app { padding: 28px 24px; border-radius: 30px; }
+  .app-grid { grid-template-columns: 1fr; gap: 32px; }
 }
-.prize-tag {
-  font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
-  text-transform: uppercase; color: #ccc;
-}
-.prize-number {
-  display: flex; align-items: baseline; justify-content: center; gap: 7px;
-  margin-top: 8px;
-}
-.prize-amount {
-  font-size: 52px; font-weight: 900; color: #1a1a2e;
-  font-variant-numeric: tabular-nums; letter-spacing: -2px;
-  line-height: 1; transition: color 0.15s;
-}
-.prize-cur { font-size: 18px; font-weight: 700; color: #c0c0cc; letter-spacing: 0.5px; }
 
-/* ═══ Wheel ═══ */
+/* ═══ Left column (wheel) ═══ */
+.left-col {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 0;
+}
+
 .wheel-area {
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 36px;
+  margin-bottom: 28px;
 }
 .wheel-wrapper { position: relative; }
 .pointer {
@@ -89,14 +77,6 @@ body {
     0 20px 60px rgba(20,33,26,0.12),
     0 4px 18px rgba(163,221,58,0.14);
 }
-.center-hub { display: none; }
-
-/* ═══ Empty Banner ═══ */
-.empty-banner {
-  display: none; text-align: center;
-  font-size: 12px; font-weight: 700; color: #e63946;
-  margin-bottom: 12px;
-}
 
 /* ═══ Buttons ═══ */
 .btn {
@@ -107,156 +87,249 @@ body {
 .btn:disabled { opacity: 0.38; cursor: not-allowed; }
 
 .spin-btn {
-  display: block; width: 100%; padding: 18px;
+  display: block; width: 100%; max-width: 460px; padding: 18px;
   font-size: 18px; border-radius: 50px; letter-spacing: 0.3px;
-  background: #ccff00; color: #1a1a2e;
-  box-shadow: 0 6px 22px rgba(160,220,0,0.38);
+  background: linear-gradient(135deg, #A3DD3A, #8FCA2B);
+  color: #14211a;
+  box-shadow: 0 8px 24px rgba(143,202,43,0.42);
   margin-bottom: 12px;
 }
 .spin-btn:hover:not(:disabled) {
-  box-shadow: 0 8px 30px rgba(160,220,0,0.55);
+  box-shadow: 0 10px 30px rgba(143,202,43,0.55);
   transform: translateY(-1px);
 }
 
 .reset-btn {
-  display: block; width: 100%; padding: 12px;
+  display: block; width: 100%; max-width: 460px; padding: 12px;
   font-size: 12.5px; border-radius: 50px; letter-spacing: 0.2px;
-  background: transparent; color: #c8c8d0; font-weight: 700;
+  background: transparent; color: #97a59c; font-weight: 700;
   border: 1.5px solid #eaebee;
 }
-.reset-btn:hover:not(:disabled) { color: #999; border-color: #ddd; background: rgba(0,0,0,0.02); }
+.reset-btn:hover:not(:disabled) { color: #14211a; border-color: #14211a; background: rgba(20,33,26,0.02); }
 
-/* ═══ QR Screen ═══ */
-#qrScreen { display: none; }
-#qrScreen.visible { display: block; animation: fadeUp 0.32s cubic-bezier(.22,1,.36,1) forwards; }
+/* ═══ Right column ═══ */
+.right-col {
+  display: flex; flex-direction: column; gap: 24px;
+  min-width: 0;
+}
+
+.brand-block { }
+.brand-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: #97a59c;
+}
+.brand-title {
+  margin-top: 6px;
+  font-size: 40px; font-weight: 900; color: #14211a;
+  letter-spacing: -1.2px; line-height: 1.05;
+}
+.brand-title .x {
+  display: inline-block;
+  margin: 0 6px;
+  color: #A3DD3A;
+  font-weight: 700;
+}
+
+/* Prize pool */
+.prize-display {
+  background: linear-gradient(150deg, #ECE7FF 0%, #FCEDF6 46%, #E9F4C9 100%);
+  border-radius: 24px;
+  padding: 22px 26px;
+  transition: transform 0.25s ease;
+}
+.prize-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: #6a7a70;
+}
+.prize-number {
+  display: flex; align-items: baseline; gap: 8px;
+  margin-top: 8px;
+}
+.prize-amount {
+  font-size: 46px; font-weight: 900; color: #14211a;
+  font-variant-numeric: tabular-nums; letter-spacing: -1.8px;
+  line-height: 1; transition: color 0.15s;
+}
+.prize-cur { font-size: 17px; font-weight: 700; color: #97a59c; letter-spacing: 0.5px; }
+
+.empty-banner {
+  display: none;
+  font-size: 12px; font-weight: 700; color: #e63946;
+  margin-top: 8px;
+}
+
+/* Result panel */
+.result-panel {
+  background: #f6f8f4;
+  border: 1px solid #eef0ec;
+  border-radius: 24px;
+  padding: 26px 26px 24px;
+  min-height: 300px;
+  display: flex; flex-direction: column;
+}
+
+/* Empty state */
+.result-empty {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 24px 8px;
+}
+.result-empty .icon {
+  font-size: 40px; margin-bottom: 12px; opacity: 0.75;
+}
+.result-empty h3 {
+  font-size: 18px; font-weight: 800; color: #14211a; margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+.result-empty p {
+  font-size: 13px; color: #6a7a70; font-weight: 600; line-height: 1.5;
+  max-width: 260px;
+}
+
+/* Won state */
+.result-won { display: none; }
+.result-won.visible {
+  display: block;
+  animation: fadeUp 0.32s cubic-bezier(.22,1,.36,1) forwards;
+}
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.won-header { text-align: center; margin-bottom: 32px; }
+.won-header { text-align: center; margin-bottom: 20px; }
 .won-eyebrow {
   font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
-  text-transform: uppercase; color: #ccc;
+  text-transform: uppercase; color: #6a7a70;
 }
 .won-row {
   display: flex; align-items: baseline; justify-content: center; gap: 8px;
-  margin-top: 10px;
+  margin-top: 8px;
 }
-.won-amount { font-size: 64px; font-weight: 900; color: #1a1a2e; letter-spacing: -2.5px; line-height: 1; }
-.won-cur    { font-size: 22px; font-weight: 700; color: #c0c0cc; }
+.won-amount { font-size: 46px; font-weight: 900; color: #14211a; letter-spacing: -1.8px; line-height: 1; }
+.won-cur    { font-size: 18px; font-weight: 700; color: #97a59c; }
 
-/* ═══ Combos ═══ */
-.combos-section { margin-bottom: 36px; }
+/* Combos */
+.combos-section { margin-bottom: 20px; }
 .section-label {
   font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
-  text-transform: uppercase; color: #d0d0d8;
-  text-align: center; margin-bottom: 20px;
+  text-transform: uppercase; color: #97a59c;
+  text-align: center; margin-bottom: 14px;
 }
 .combo-row {
   display: flex; align-items: center; justify-content: center;
-  gap: 8px; padding: 8px 0;
+  gap: 8px; padding: 4px 0;
 }
-.c-icon { font-size: 34px; line-height: 1; }
-.c-plus  { font-size: 16px; font-weight: 800; color: #ddd; }
+.c-icon { font-size: 28px; line-height: 1; }
+.c-plus  { font-size: 15px; font-weight: 800; color: #c8c8d0; }
 .combo-or {
-  display: flex; align-items: center; gap: 12px; margin: 4px 0;
+  display: flex; align-items: center; gap: 12px; margin: 2px 0;
 }
-.combo-or-line  { flex: 1; height: 1px; background: #f0f0f4; }
+.combo-or-line  { flex: 1; height: 1px; background: #e7ece8; }
 .combo-or-text  {
-  font-size: 10px; font-weight: 700; color: #ddd;
+  font-size: 10px; font-weight: 700; color: #97a59c;
   letter-spacing: 2px; text-transform: uppercase;
 }
 
-/* ═══ QR Bottom ═══ */
-.qr-bottom-section { margin-bottom: 28px; }
+/* QR grid */
+.qr-bottom-section { margin-bottom: 20px; }
 .qr-bottom-grid {
-  display: flex; gap: 16px; justify-content: center; align-items: flex-start;
+  display: flex; gap: 12px; justify-content: center; align-items: flex-start;
+  flex-wrap: wrap;
 }
 .qr-btm-item {
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-  flex: 1; max-width: 150px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  flex: 1 1 100px; max-width: 128px;
 }
 .qr-btm-item canvas {
   display: block; width: 100%; height: auto; border-radius: 10px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 16px rgba(20,33,26,0.08);
+  background: #fff;
 }
-.qr-btm-icon  { font-size: 18px; }
-.qr-btm-name  { font-size: 11px; font-weight: 700; color: #888; text-align: center; line-height: 1.3; }
-.qr-btm-price { font-size: 11px; font-weight: 800; color: #bbb; }
+.qr-btm-icon  { font-size: 16px; }
+.qr-btm-name  { font-size: 10.5px; font-weight: 700; color: #41514a; text-align: center; line-height: 1.3; }
+.qr-btm-price { font-size: 10.5px; font-weight: 800; color: #97a59c; }
 
 .validate-btn {
-  display: block; width: 100%; padding: 18px;
-  font-size: 17px; border-radius: 50px; letter-spacing: 0.2px;
-  background: #ccff00; color: #1a1a2e;
-  box-shadow: 0 6px 22px rgba(160,220,0,0.38);
+  display: block; width: 100%; padding: 16px;
+  font-size: 16px; border-radius: 50px; letter-spacing: 0.2px;
+  background: linear-gradient(135deg, #A3DD3A, #8FCA2B);
+  color: #14211a;
+  box-shadow: 0 6px 22px rgba(143,202,43,0.42);
 }
 .validate-btn:hover {
-  box-shadow: 0 8px 30px rgba(160,220,0,0.55);
+  box-shadow: 0 8px 30px rgba(143,202,43,0.55);
   transform: translateY(-1px);
 }
 </style>
 </head>
 <body>
-<div class="app" id="app">
+<div class="app">
+  <div class="app-grid">
 
-  <!-- ══════ WHEEL SCREEN ══════ -->
-  <div id="wheelScreen">
-    <div class="header">
-      <span class="brand">Lucky Spin <span class="brand-dot">•</span></span>
-      <span style="font-size:11px;color:#ddd;font-weight:600;letter-spacing:0.5px;">🥐 Tech50</span>
+    <!-- ══════ LEFT — WHEEL ══════ -->
+    <div class="left-col">
+      <div class="wheel-area">
+        <div class="wheel-wrapper">
+          <div class="pointer" id="pointer"></div>
+          <canvas id="wheelCanvas" width="460" height="460"></canvas>
+        </div>
+      </div>
+      <button class="btn spin-btn" id="spinBtn" onclick="spin()">🎰  Spin the wheel</button>
+      <button class="btn reset-btn" id="resetBtn" onclick="resetPrize()">↺  Reset Prize Pool</button>
     </div>
 
-    <div class="prize-display" id="prizeBox">
-      <div class="prize-tag">Prize Pool</div>
-      <div class="prize-number">
-        <span class="prize-amount" id="prizeDisplay">6.500.000</span>
-        <span class="prize-cur">VND</span>
+    <!-- ══════ RIGHT — TITLE, POOL, REWARDS ══════ -->
+    <div class="right-col">
+      <div class="brand-block">
+        <div class="brand-eyebrow">Lucky Spin</div>
+        <div class="brand-title">Tech50<span class="x">×</span>PayMoji</div>
+      </div>
+
+      <div class="prize-display" id="prizeBox">
+        <div class="prize-tag">Prize Pool</div>
+        <div class="prize-number">
+          <span class="prize-amount" id="prizeDisplay">6.500.000</span>
+          <span class="prize-cur">₫</span>
+        </div>
+        <div class="empty-banner" id="emptyBanner">Prize pool exhausted — hit Reset to play again.</div>
+      </div>
+
+      <div class="result-panel">
+        <!-- Empty state (before spin / after validate) -->
+        <div class="result-empty" id="resultEmpty">
+          <div class="icon">🎁</div>
+          <h3>Ready to win?</h3>
+          <p>Spin the wheel to reveal your prize and see the rewards you can redeem.</p>
+        </div>
+
+        <!-- Won state (after spin) -->
+        <div class="result-won" id="resultWon">
+          <div class="won-header">
+            <div class="won-eyebrow">🎉 You won</div>
+            <div class="won-row">
+              <span class="won-amount" id="wonAmountDisplay">50.000</span>
+              <span class="won-cur">₫</span>
+            </div>
+          </div>
+
+          <div class="combos-section">
+            <div class="section-label">What you can get</div>
+            <div id="combosList"></div>
+          </div>
+
+          <div class="qr-bottom-section">
+            <div class="section-label">Scan to redeem</div>
+            <div class="qr-bottom-grid" id="qrBottomGrid"></div>
+          </div>
+
+          <button class="btn validate-btn" onclick="validate()">✓  Validate &amp; Redeem</button>
+        </div>
       </div>
     </div>
 
-    <div class="empty-banner" id="emptyBanner">Prize pool exhausted — hit Reset to play again.</div>
-
-    <div class="wheel-area">
-      <div class="wheel-wrapper">
-        <div class="pointer" id="pointer"></div>
-        <canvas id="wheelCanvas" width="460" height="460"></canvas>
-        <div class="center-hub"></div>
-      </div>
-    </div>
-
-    <button class="btn spin-btn" id="spinBtn" onclick="spin()">🎰  Spin the wheel</button>
-    <button class="btn reset-btn" id="resetBtn" onclick="resetPrize()">↺  Reset Prize Pool</button>
   </div>
-
-  <!-- ══════ QR SCREEN ══════ -->
-  <div id="qrScreen">
-    <div class="header">
-      <span class="brand">Lucky Spin <span class="brand-dot">•</span></span>
-      <span style="font-size:11px;color:#ddd;font-weight:600;letter-spacing:0.5px;">🥐 Tech50</span>
-    </div>
-
-    <div class="won-header">
-      <div class="won-eyebrow">🎉 You won</div>
-      <div class="won-row">
-        <span class="won-amount" id="wonAmountDisplay">50.000</span>
-        <span class="won-cur">VND</span>
-      </div>
-    </div>
-
-    <div class="combos-section">
-      <div class="section-label">What you can get</div>
-      <div id="combosList"></div>
-    </div>
-
-    <div class="qr-bottom-section">
-      <div class="section-label" style="margin-bottom:16px;">Scan to redeem</div>
-      <div class="qr-bottom-grid" id="qrBottomGrid"></div>
-    </div>
-
-    <button class="btn validate-btn" onclick="validate()">✓  Validate &amp; Redeem</button>
-  </div>
-
 </div>
 
 <script>
@@ -298,27 +371,25 @@ const SECTOR_DEFS = [
 ];
 const TOTAL_UNITS = SECTOR_DEFS.reduce((s, d) => s + d.units, 0);
 // Shift so the jackpot sector's MIDPOINT sits at the top (under the pointer) at rest.
-// Jackpot is the last sector; its centre falls at (sumOfPrev + jackpot/2) units.
 const JACKPOT_UNITS = SECTOR_DEFS[SECTOR_DEFS.length - 1].units;
 const PREV_UNITS    = TOTAL_UNITS - JACKPOT_UNITS;
 const SECTOR_SHIFT  = 2 * Math.PI * (1 - (PREV_UNITS + JACKPOT_UNITS / 2) / TOTAL_UNITS);
 let _cum = SECTOR_SHIFT;
-const sectors = SECTOR_DEFS.map((d, i) => {
+const sectors = SECTOR_DEFS.map((d) => {
   const span = (d.units / TOTAL_UNITS) * 2 * Math.PI;
   const start = _cum; _cum += span;
   return { ...d, startAngle: start, spanAngle: span };
 });
 
-// PayMoji pastel palette — soft washes, smooth gradients
-// Wide (4-unit) sectors → mint/lime; medium (3-unit) → lilac & pink (alternating)
+// PayMoji pastel palette
 const SHADE_BY_UNITS = {
   4: [
-    ['#F4FADD', '#D9EE9E'],   // pale mint → chartreuse wash
+    ['#F4FADD', '#D9EE9E'],
     ['#EFF7CC', '#C6E480'],
   ],
   3: [
-    ['#FBF2FF', '#DECBFF'],   // pale lilac → lavender
-    ['#FFF2FA', '#F7CFE3'],   // pale pink → rose
+    ['#FBF2FF', '#DECBFF'],
+    ['#FFF2FA', '#F7CFE3'],
   ],
 };
 
@@ -334,7 +405,7 @@ wc.style.width  = CSS_SIZE + 'px';
 wc.style.height = CSS_SIZE + 'px';
 wctx.scale(DPR, DPR);
 const CX = CSS_SIZE / 2, CY = CSS_SIZE / 2;
-const R  = CX - 6;           // sectors fill full radius, no outer band
+const R  = CX - 6;
 const BASE_ANGLE = -Math.PI / 2;
 
 function drawWheel(rot) {
@@ -358,7 +429,6 @@ function drawWheel(rot) {
       wctx.save();
       wctx.shadowColor = 'rgba(255,122,89,0.85)';
       wctx.shadowBlur  = 28;
-      // 135° linear gradient equivalent: end at cos(135°)·R, sin(135°)·R
       const angle = 135 * Math.PI / 180;
       const gx = Math.cos(angle) * R, gy = Math.sin(angle) * R;
       const jg = wctx.createLinearGradient(-gx, -gy, gx, gy);
@@ -382,7 +452,6 @@ function drawWheel(rot) {
       wctx.restore();
     } else {
       const shades = SHADE_BY_UNITS[sec.units][sec.units === 4 ? (shadeIdx4++ % 2) : (shadeIdx3++ % 2)];
-      // Radial from centre for a soft, glowing centre
       const g = wctx.createRadialGradient(0, 0, R * 0.15, 0, 0, R);
       g.addColorStop(0, shades[0]);
       g.addColorStop(1, shades[1]);
@@ -391,7 +460,7 @@ function drawWheel(rot) {
       wctx.fillStyle = g; wctx.fill();
     }
 
-    // Text: prize label only (no emoji), same size everywhere
+    // Text: prize label, same size everywhere
     wctx.save();
     wctx.rotate(mid);
     wctx.textBaseline = 'middle';
@@ -426,18 +495,15 @@ function drawWheel(rot) {
 
   wctx.restore(); // undo rotation
 
-  // ── Centre hub (drawn last, no rotation) ──
-  // White disc
+  // ── Centre hub ──
   wctx.beginPath(); wctx.arc(0, 0, 34, 0, Math.PI * 2);
   wctx.fillStyle = '#ffffff'; wctx.fill();
 
-  // Lime centre with gradient
   const dg = wctx.createRadialGradient(-4, -4, 0, 0, 0, 20);
   dg.addColorStop(0, '#D3F088'); dg.addColorStop(1, '#A3DD3A');
   wctx.beginPath(); wctx.arc(0, 0, 20, 0, Math.PI * 2);
   wctx.fillStyle = dg; wctx.fill();
 
-  // Soft shine
   wctx.beginPath(); wctx.arc(-4, -4, 8, 0, Math.PI * 2);
   wctx.fillStyle = 'rgba(255,255,255,0.45)'; wctx.fill();
 
@@ -453,7 +519,6 @@ function getSectorAtPointer(rot) {
     if (b <= TAU) {
       if (rel >= a && rel < b) return s;
     } else {
-      // Sector wraps across 2π (e.g. the jackpot at the top)
       if (rel >= a || rel < b - TAU) return s;
     }
   }
@@ -464,7 +529,13 @@ function getSectorAtPointer(rot) {
 function drawQR(id, seed) {
   const qc = document.getElementById(id); if (!qc) return;
   const qx = qc.getContext('2d');
-  const sz = qc.width, M = 21, cs = sz / M;
+  // HiDPI for QRs too
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const cssSize = qc.width;
+  qc.width = cssSize * dpr; qc.height = cssSize * dpr;
+  qc.style.width = cssSize + 'px'; qc.style.height = cssSize + 'px';
+  qx.scale(dpr, dpr);
+  const sz = cssSize, M = 21, cs = sz / M;
   qx.fillStyle = '#fff'; qx.fillRect(0, 0, sz, sz);
   function bit(r, c) {
     let h = seed + r*7919 + c*6151;
@@ -472,24 +543,24 @@ function drawQR(id, seed) {
     h = Math.imul(h^(h>>>16), 0x45d9f3b);
     return (h^(h>>>16)) & 1;
   }
-  qx.fillStyle = '#1a1a2e';
+  qx.fillStyle = '#14211a';
   for (let r = 0; r < M; r++) for (let c = 0; c < M; c++) {
     if (r<9&&c<9) continue; if (r<9&&c>M-9) continue; if (r>M-9&&c<9) continue;
     if (bit(r,c)) qx.fillRect(c*cs, r*cs, cs, cs);
   }
   function finder(ox, oy) {
-    qx.fillStyle='#1a1a2e'; qx.fillRect(ox,oy,7*cs,7*cs);
+    qx.fillStyle='#14211a'; qx.fillRect(ox,oy,7*cs,7*cs);
     qx.fillStyle='#fff';    qx.fillRect(ox+cs,oy+cs,5*cs,5*cs);
-    qx.fillStyle='#1a1a2e'; qx.fillRect(ox+2*cs,oy+2*cs,3*cs,3*cs);
+    qx.fillStyle='#14211a'; qx.fillRect(ox+2*cs,oy+2*cs,3*cs,3*cs);
   }
   finder(0,0); finder((M-7)*cs,0); finder(0,(M-7)*cs);
   for (let i=8;i<=M-9;i++) {
-    qx.fillStyle=i%2===0?'#1a1a2e':'#fff';
+    qx.fillStyle=i%2===0?'#14211a':'#fff';
     qx.fillRect(i*cs,6*cs,cs,cs); qx.fillRect(6*cs,i*cs,cs,cs);
   }
 }
 
-// ═══════════ BUILD RESULT SCREEN ═══════════
+// ═══════════ BUILD RESULT PANEL ═══════════
 function buildCombos(amount) {
   const listEl = document.getElementById('combosList');
   listEl.innerHTML = '';
@@ -524,7 +595,7 @@ function buildQRGrid(amount) {
     w.innerHTML = `<canvas id="${cid}" width="120" height="120"></canvas>
                    <span class="qr-btm-icon">${item.icon}</span>
                    <div class="qr-btm-name">${item.name}</div>
-                   <div class="qr-btm-price">${fmtVND(item.price)} VND</div>`;
+                   <div class="qr-btm-price">${fmtVND(item.price)} ₫</div>`;
     grid.appendChild(w); drawQR(cid, item.seed);
   });
 }
@@ -534,6 +605,10 @@ function spin() {
   if (isSpinning) return;
   if (totalPrize <= 0) { document.getElementById('emptyBanner').style.display='block'; return; }
   document.getElementById('emptyBanner').style.display = 'none';
+  // Reset result panel back to empty state before spinning
+  document.getElementById('resultWon').classList.remove('visible');
+  document.getElementById('resultEmpty').style.display = 'flex';
+
   isSpinning = true;
   document.getElementById('spinBtn').disabled = true;
   document.getElementById('resetBtn').disabled = true;
@@ -555,22 +630,24 @@ function onSpinEnd(final) {
   const ptr = document.getElementById('pointer');
   ptr.classList.remove('bounce'); void ptr.offsetWidth; ptr.classList.add('bounce');
   wonAmount = getSectorAtPointer(currentRot).value;
-  setTimeout(showQRScreen, 700);
+  setTimeout(showResult, 550);
 }
 
-// ═══════════ QR SCREEN ═══════════
-function showQRScreen() {
+// ═══════════ SHOW RESULT (right panel) ═══════════
+function showResult() {
   document.getElementById('wonAmountDisplay').textContent = fmtVND(wonAmount);
-  buildCombos(wonAmount); buildQRGrid(wonAmount);
-  document.getElementById('wheelScreen').style.display = 'none';
-  const qs = document.getElementById('qrScreen');
-  qs.style.display = 'block'; qs.classList.remove('visible'); void qs.offsetWidth; qs.classList.add('visible');
+  buildCombos(wonAmount);
+  buildQRGrid(wonAmount);
+  document.getElementById('resultEmpty').style.display = 'none';
+  const won = document.getElementById('resultWon');
+  won.classList.remove('visible'); void won.offsetWidth; won.classList.add('visible');
 }
 
 // ═══════════ VALIDATE ═══════════
 function validate() {
-  document.getElementById('qrScreen').style.display = 'none';
-  document.getElementById('wheelScreen').style.display = 'block';
+  // Flip result panel back to empty state
+  document.getElementById('resultWon').classList.remove('visible');
+  document.getElementById('resultEmpty').style.display = 'flex';
 
   const startVal = totalPrize, endVal = Math.max(0, totalPrize - wonAmount);
   const dur = 1300, t0 = performance.now();
@@ -605,7 +682,7 @@ function resetPrize() {
   document.getElementById('spinBtn').disabled = false;
   const box = document.getElementById('prizeBox');
   box.style.transition = 'transform 0.3s cubic-bezier(.34,1.56,.64,1)';
-  box.style.transform = 'scale(1.04)';
+  box.style.transform = 'scale(1.03)';
   setTimeout(() => { box.style.transform='scale(1)'; setTimeout(()=>box.style.transition='',320); }, 320);
 }
 
