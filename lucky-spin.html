@@ -320,12 +320,20 @@ const SHADE_BY_UNITS = {
 // ═══════════ WHEEL DRAWING ═══════════
 const wc   = document.getElementById('wheelCanvas');
 const wctx = wc.getContext('2d');
-const CX = wc.width / 2, CY = wc.height / 2;
+// HiDPI: draw at devicePixelRatio for crisp text
+const DPR = Math.max(1, window.devicePixelRatio || 1);
+const CSS_SIZE = wc.width; // 460
+wc.width  = CSS_SIZE * DPR;
+wc.height = CSS_SIZE * DPR;
+wc.style.width  = CSS_SIZE + 'px';
+wc.style.height = CSS_SIZE + 'px';
+wctx.scale(DPR, DPR);
+const CX = CSS_SIZE / 2, CY = CSS_SIZE / 2;
 const R  = CX - 6;           // sectors fill full radius, no outer band
 const BASE_ANGLE = -Math.PI / 2;
 
 function drawWheel(rot) {
-  wctx.clearRect(0, 0, wc.width, wc.height);
+  wctx.clearRect(0, 0, CSS_SIZE, CSS_SIZE);
   wctx.save();
   wctx.translate(CX, CY);
 
@@ -384,8 +392,6 @@ function drawWheel(rot) {
 
     if (sec.value === 250000) {
       wctx.fillStyle = '#3A2000';
-      wctx.shadowColor = 'rgba(255,220,120,0.9)';
-      wctx.shadowBlur = 6;
       wctx.fillText('250.000₫', R - 14, 0);
     } else if (sec.units === 4) {
       wctx.fillStyle = '#14211a';
