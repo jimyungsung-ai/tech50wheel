@@ -354,26 +354,29 @@ function drawWheel(rot) {
 
     // Fill
     if (sec.value === 250000) {
-      // 🏆 JACKPOT — vivid magenta with strong glow
+      // 🏆 JACKPOT — PayMoji warm gradient (#FFCD4D → #FF7A59) with coral glow
       wctx.save();
-      wctx.shadowColor = 'rgba(255,79,168,0.85)';
+      wctx.shadowColor = 'rgba(255,122,89,0.85)';
       wctx.shadowBlur  = 28;
-      const jg = wctx.createRadialGradient(0, 0, 8, 0, 0, R);
-      jg.addColorStop(0,    '#FFE0EE');
-      jg.addColorStop(0.45, '#FF4FA8');
-      jg.addColorStop(1,    '#A01067');
+      // 135° linear gradient equivalent: end at cos(135°)·R, sin(135°)·R
+      const angle = 135 * Math.PI / 180;
+      const gx = Math.cos(angle) * R, gy = Math.sin(angle) * R;
+      const jg = wctx.createLinearGradient(-gx, -gy, gx, gy);
+      jg.addColorStop(0,   '#FFE39A');
+      jg.addColorStop(0.5, '#FFCD4D');
+      jg.addColorStop(1,   '#FF7A59');
       wctx.beginPath(); wctx.moveTo(0, 0);
       wctx.arc(0, 0, R, sa, ea); wctx.closePath();
       wctx.fillStyle = jg; wctx.fill();
       wctx.restore();
 
-      // Bright pink highlight arc on the outer rim of the jackpot sector
+      // Warm highlight arc on the outer rim of the jackpot sector
       wctx.save();
       wctx.beginPath();
       wctx.arc(0, 0, R - 3, sa + 0.02, ea - 0.02);
-      wctx.strokeStyle = '#FFC7DE';
+      wctx.strokeStyle = '#FFE7B0';
       wctx.lineWidth = 4;
-      wctx.shadowColor = 'rgba(255,120,190,0.95)';
+      wctx.shadowColor = 'rgba(255,205,77,0.95)';
       wctx.shadowBlur = 10;
       wctx.stroke();
       wctx.restore();
