@@ -341,17 +341,28 @@ function drawWheel(rot) {
 
     // Fill
     if (sec.value === 250000) {
-      // 🏆 JACKPOT — warm gold-cream wash with subtle glow
+      // 🏆 JACKPOT — vivid gold with strong glow
       wctx.save();
-      wctx.shadowColor = 'rgba(215,154,46,0.55)';
-      wctx.shadowBlur  = 16;
-      const jg = wctx.createRadialGradient(0, 0, 10, 0, 0, R);
-      jg.addColorStop(0,    '#FFF6DC');
-      jg.addColorStop(0.55, '#F5D98A');
-      jg.addColorStop(1,    '#D79A2E');
+      wctx.shadowColor = 'rgba(215,154,46,0.9)';
+      wctx.shadowBlur  = 28;
+      const jg = wctx.createRadialGradient(0, 0, 8, 0, 0, R);
+      jg.addColorStop(0,    '#FFF3B0');
+      jg.addColorStop(0.45, '#FFC94A');
+      jg.addColorStop(1,    '#C97A0A');
       wctx.beginPath(); wctx.moveTo(0, 0);
       wctx.arc(0, 0, R, sa, ea); wctx.closePath();
       wctx.fillStyle = jg; wctx.fill();
+      wctx.restore();
+
+      // Golden arc highlight on the outer rim of the jackpot sector
+      wctx.save();
+      wctx.beginPath();
+      wctx.arc(0, 0, R - 3, sa + 0.02, ea - 0.02);
+      wctx.strokeStyle = '#FFE27A';
+      wctx.lineWidth = 4;
+      wctx.shadowColor = 'rgba(255,200,0,0.9)';
+      wctx.shadowBlur = 10;
+      wctx.stroke();
       wctx.restore();
     } else {
       const shades = SHADE_BY_UNITS[sec.units][sec.units === 4 ? (shadeIdx4++ % 2) : (shadeIdx3++ % 2)];
@@ -364,40 +375,24 @@ function drawWheel(rot) {
       wctx.fillStyle = g; wctx.fill();
     }
 
-    // Text: emoji + label (forest-green PayMoji text)
+    // Text: prize label only (no emoji), same size everywhere
     wctx.save();
     wctx.rotate(mid);
     wctx.textBaseline = 'middle';
+    wctx.textAlign = 'right';
+    wctx.font = '800 22px -apple-system,sans-serif';
 
     if (sec.value === 250000) {
-      // emoji
-      wctx.textAlign = 'center';
-      wctx.font = '13px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
-      wctx.fillText('👕', R * 0.46, 0);
-      // label
-      wctx.font = '800 13px -apple-system,sans-serif';
-      wctx.fillStyle = '#6E4A0F';
-      wctx.fillText('250K', R * 0.80, 0);
+      wctx.fillStyle = '#3A2000';
+      wctx.shadowColor = 'rgba(255,220,120,0.9)';
+      wctx.shadowBlur = 6;
+      wctx.fillText('250K', R - 14, 0);
     } else if (sec.units === 4) {
-      // emoji
-      wctx.textAlign = 'center';
-      wctx.font = '22px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
-      wctx.fillText('🥚', R * 0.55, 0);
-      // label
-      wctx.textAlign = 'right';
-      wctx.font = '800 21px -apple-system,sans-serif';
       wctx.fillStyle = '#14211a';
       wctx.fillText('50K', R - 14, 0);
     } else {
-      // emoji
-      wctx.textAlign = 'center';
-      wctx.font = '20px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
-      wctx.fillText('🥐', R * 0.52, 0);
-      // label
-      wctx.textAlign = 'right';
-      wctx.font = '800 18px -apple-system,sans-serif';
       wctx.fillStyle = '#3A2560';
-      wctx.fillText('50K', R - 12, 0);
+      wctx.fillText('50K', R - 14, 0);
     }
     wctx.restore();
   });
