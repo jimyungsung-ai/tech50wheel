@@ -168,24 +168,62 @@ body {
   display: flex; flex-direction: column;
 }
 
-/* Empty state */
+/* Empty state — 3-prize legend */
 .result-empty {
   flex: 1;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center;
-  padding: 24px 8px;
+  display: flex; flex-direction: column;
+  padding: 4px 4px;
 }
-.result-empty .icon {
-  font-size: 40px; margin-bottom: 12px; opacity: 0.75;
+.legend-header {
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: #6a7a70;
+  text-align: center; margin-bottom: 18px;
 }
-.result-empty h3 {
-  font-size: 18px; font-weight: 800; color: #14211a; margin-bottom: 6px;
-  letter-spacing: -0.3px;
+.prize-legend {
+  display: flex; flex-direction: column; gap: 10px;
 }
-.result-empty p {
-  font-size: 13px; color: #6a7a70; font-weight: 600; line-height: 1.5;
-  max-width: 260px;
+.legend-item {
+  display: flex; align-items: stretch;
+  background: #ffffff;
+  border: 1px solid #eef0ec;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.12s ease, box-shadow 0.15s ease;
 }
+.legend-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(20,33,26,0.06);
+}
+.legend-item.jackpot {
+  border-color: #FFCD4D;
+  background: linear-gradient(135deg, #FFF7E0 0%, #FFEFCC 100%);
+  box-shadow: 0 4px 14px rgba(255,122,89,0.15);
+}
+.legend-swatch {
+  flex: 0 0 8px;
+}
+.legend-swatch.green  { background: linear-gradient(180deg, #D9EE9E, #8FCA2B); }
+.legend-swatch.blue   { background: linear-gradient(180deg, #9BBAFF, #4E7FE0); }
+.legend-swatch.coral  { background: linear-gradient(180deg, #FFCD4D, #FF7A59); }
+.legend-body {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 12px 16px; flex: 1;
+}
+.legend-amount {
+  font-size: 15px; font-weight: 800; color: #14211a;
+  letter-spacing: -0.2px; display: flex; align-items: center; gap: 8px;
+}
+.jackpot-tag {
+  display: inline-block;
+  font-size: 9px; font-weight: 800; letter-spacing: 1.5px;
+  color: #7A3A00; background: #FFCD4D;
+  padding: 2px 7px; border-radius: 8px;
+}
+.legend-reward {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: #41514a;
+}
+.legend-icon { font-size: 20px; line-height: 1; }
 
 /* Won state */
 .result-won { display: none; }
@@ -210,7 +248,19 @@ body {
 .won-amount { font-size: 46px; font-weight: 900; color: #14211a; letter-spacing: -1.8px; line-height: 1; }
 .won-cur    { font-size: 18px; font-weight: 700; color: #97a59c; }
 
-/* Combos */
+/* Won-item card */
+.won-item {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  background: #ffffff;
+  border: 1px solid #eef0ec;
+  border-radius: 16px;
+  padding: 22px 20px;
+  margin-bottom: 20px;
+}
+.won-item-icon { font-size: 56px; line-height: 1; }
+.won-item-name { font-size: 16px; font-weight: 800; color: #14211a; letter-spacing: -0.2px; }
+
+/* Combos (legacy — kept out of use) */
 .combos-section { margin-bottom: 20px; }
 .section-label {
   font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
@@ -277,34 +327,45 @@ body {
         </div>
       </div>
       <button class="btn spin-btn" id="spinBtn" onclick="spin()">🎰  Spin the wheel</button>
-      <button class="btn reset-btn" id="resetBtn" onclick="resetPrize()">↺  Reset Prize Pool</button>
     </div>
 
-    <!-- ══════ RIGHT — TITLE, POOL, REWARDS ══════ -->
+    <!-- ══════ RIGHT — TITLE + REWARDS ══════ -->
     <div class="right-col">
       <div class="brand-block">
         <div class="brand-eyebrow">Lucky Spin</div>
         <div class="brand-title">Tech50<span class="x">×</span>PayMoji</div>
       </div>
 
-      <div class="prize-display" id="prizeBox">
-        <div class="prize-tag">Prize Pool</div>
-        <div class="prize-number">
-          <span class="prize-amount" id="prizeDisplay">6.500.000</span>
-          <span class="prize-cur">₫</span>
-        </div>
-        <div class="empty-banner" id="emptyBanner">Prize pool exhausted — hit Reset to play again.</div>
-      </div>
-
       <div class="result-panel">
-        <!-- Empty state (before spin / after validate) -->
+        <!-- Empty state — the 3-prize legend -->
         <div class="result-empty" id="resultEmpty">
-          <div class="icon">🎁</div>
-          <h3>Ready to win?</h3>
-          <p>Spin the wheel to reveal your prize and see the rewards you can redeem.</p>
+          <div class="legend-header">🎁 Possible Prizes</div>
+          <div class="prize-legend">
+            <div class="legend-item">
+              <span class="legend-swatch green"></span>
+              <div class="legend-body">
+                <div class="legend-amount">50.000₫</div>
+                <div class="legend-reward"><span class="legend-icon">🥐</span> 1 Plain Croissant</div>
+              </div>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch blue"></span>
+              <div class="legend-body">
+                <div class="legend-amount">50.000₫</div>
+                <div class="legend-reward"><span class="legend-icon">🍳</span> 1 Egg Croissant</div>
+              </div>
+            </div>
+            <div class="legend-item jackpot">
+              <span class="legend-swatch coral"></span>
+              <div class="legend-body">
+                <div class="legend-amount">250.000₫ <span class="jackpot-tag">JACKPOT</span></div>
+                <div class="legend-reward"><span class="legend-icon">👕</span> 1 T-shirt</div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Won state (after spin) -->
+        <!-- Won state — the single prize you won -->
         <div class="result-won" id="resultWon">
           <div class="won-header">
             <div class="won-eyebrow">🎉 You won</div>
@@ -314,9 +375,9 @@ body {
             </div>
           </div>
 
-          <div class="combos-section">
-            <div class="section-label">What you can get</div>
-            <div id="combosList"></div>
+          <div class="won-item" id="wonItem">
+            <span class="won-item-icon" id="wonItemIcon">🥐</span>
+            <div class="won-item-name" id="wonItemName">1 Plain Croissant</div>
           </div>
 
           <button class="btn validate-btn" onclick="validate()">✓  Validate &amp; Redeem</button>
@@ -328,41 +389,26 @@ body {
 </div>
 
 <script>
-// ═══════════ ITEMS & REDEMPTION OPTIONS ═══════════
+// ═══════════ ITEMS ═══════════
 const ITEMS = {
-  plain: { icon: '🥐', name: 'Plain Croissant', price: 50000,  seed: 11111 },
-  egg:   { icon: '🍳', name: 'Egg Croissant',   price: 50000,  seed: 67890 },
-  cake:  { icon: '🎂', name: 'Cake',             price: 250000, seed: 54321 },
-};
-const REDEEMS = {
-  50000: [
-    [{ key: 'plain', n: 1 }],
-    [{ key: 'egg',   n: 1 }],
-  ],
-  250000: [
-    [{ key: 'plain', n: 5 }],
-    [{ key: 'egg',   n: 5 }],
-    [{ key: 'cake',  n: 1 }],
-  ],
-};
-const QR_KEYS = {
-  50000:  ['plain', 'egg'],
-  250000: ['plain', 'egg', 'cake'],
+  plain:  { icon: '🥐', name: '1 Plain Croissant', price: 50000  },
+  egg:    { icon: '🍳', name: '1 Egg Croissant',   price: 50000  },
+  tshirt: { icon: '👕', name: '1 T-shirt',          price: 250000 },
 };
 
 // ═══════════ STATE ═══════════
-const TOTAL = 6_500_000;
-let totalPrize = TOTAL, isSpinning = false, currentRot = 0, wonAmount = 0;
+let isSpinning = false, currentRot = 0, wonKey = 'plain';
 
 // ═══════════ SECTORS ═══════════
+// Each sector maps to a specific prize.
 const SECTOR_DEFS = [
-  { value: 50000,  units: 4 },
-  { value: 50000,  units: 3 },
-  { value: 50000,  units: 4 },
-  { value: 50000,  units: 3 },
-  { value: 50000,  units: 4 },
-  { value: 50000,  units: 3 },
-  { value: 250000, units: 1.5 },
+  { prize: 'plain',  units: 4 },   // green wide
+  { prize: 'egg',    units: 3 },   // blue medium
+  { prize: 'plain',  units: 4 },
+  { prize: 'egg',    units: 3 },
+  { prize: 'plain',  units: 4 },
+  { prize: 'egg',    units: 3 },
+  { prize: 'tshirt', units: 1.5 }, // jackpot
 ];
 const TOTAL_UNITS = SECTOR_DEFS.reduce((s, d) => s + d.units, 0);
 // Shift so the jackpot sector's MIDPOINT sits at the top (under the pointer) at rest.
@@ -376,15 +422,16 @@ const sectors = SECTOR_DEFS.map((d) => {
   return { ...d, startAngle: start, spanAngle: span };
 });
 
-// PayMoji pastel palette
+// PayMoji-adjacent palette
+// Wide (green) sectors → mint/lime; medium (blue) sectors → sky/blue
 const SHADE_BY_UNITS = {
   4: [
     ['#F4FADD', '#D9EE9E'],
     ['#EFF7CC', '#C6E480'],
   ],
   3: [
-    ['#FBF2FF', '#DECBFF'],
-    ['#FFF2FA', '#F7CFE3'],
+    ['#DFEAFF', '#9BBAFF'],
+    ['#D2E1FF', '#7FA8F7'],
   ],
 };
 
@@ -419,7 +466,7 @@ function drawWheel(rot) {
     const mid = sa + sec.spanAngle / 2;
 
     // Fill
-    if (sec.value === 250000) {
+    if (sec.prize === 'tshirt') {
       // 🏆 JACKPOT — PayMoji warm gradient (#FFCD4D → #FF7A59) with coral glow
       wctx.save();
       wctx.shadowColor = 'rgba(255,122,89,0.85)';
@@ -462,14 +509,14 @@ function drawWheel(rot) {
     wctx.textAlign = 'right';
     wctx.font = '800 19px -apple-system,sans-serif';
 
-    if (sec.value === 250000) {
+    if (sec.prize === 'tshirt') {
       wctx.fillStyle = '#ffffff';
       wctx.fillText('250.000₫', R - 14, 0);
-    } else if (sec.units === 4) {
+    } else if (sec.prize === 'plain') {
       wctx.fillStyle = '#14211a';
       wctx.fillText('50.000₫', R - 14, 0);
     } else {
-      wctx.fillStyle = '#3A2560';
+      wctx.fillStyle = '#132C6B';
       wctx.fillText('50.000₫', R - 14, 0);
     }
     wctx.restore();
@@ -520,93 +567,15 @@ function getSectorAtPointer(rot) {
   return sectors[0];
 }
 
-// ═══════════ QR CODES ═══════════
-function drawQR(id, seed) {
-  const qc = document.getElementById(id); if (!qc) return;
-  const qx = qc.getContext('2d');
-  // HiDPI for QRs too
-  const dpr = Math.max(1, window.devicePixelRatio || 1);
-  const cssSize = qc.width;
-  qc.width = cssSize * dpr; qc.height = cssSize * dpr;
-  qc.style.width = cssSize + 'px'; qc.style.height = cssSize + 'px';
-  qx.scale(dpr, dpr);
-  const sz = cssSize, M = 21, cs = sz / M;
-  qx.fillStyle = '#fff'; qx.fillRect(0, 0, sz, sz);
-  function bit(r, c) {
-    let h = seed + r*7919 + c*6151;
-    h = Math.imul(h^(h>>>16), 0x45d9f3b);
-    h = Math.imul(h^(h>>>16), 0x45d9f3b);
-    return (h^(h>>>16)) & 1;
-  }
-  qx.fillStyle = '#14211a';
-  for (let r = 0; r < M; r++) for (let c = 0; c < M; c++) {
-    if (r<9&&c<9) continue; if (r<9&&c>M-9) continue; if (r>M-9&&c<9) continue;
-    if (bit(r,c)) qx.fillRect(c*cs, r*cs, cs, cs);
-  }
-  function finder(ox, oy) {
-    qx.fillStyle='#14211a'; qx.fillRect(ox,oy,7*cs,7*cs);
-    qx.fillStyle='#fff';    qx.fillRect(ox+cs,oy+cs,5*cs,5*cs);
-    qx.fillStyle='#14211a'; qx.fillRect(ox+2*cs,oy+2*cs,3*cs,3*cs);
-  }
-  finder(0,0); finder((M-7)*cs,0); finder(0,(M-7)*cs);
-  for (let i=8;i<=M-9;i++) {
-    qx.fillStyle=i%2===0?'#14211a':'#fff';
-    qx.fillRect(i*cs,6*cs,cs,cs); qx.fillRect(6*cs,i*cs,cs,cs);
-  }
-}
-
-// ═══════════ BUILD RESULT PANEL ═══════════
-function buildCombos(amount) {
-  const listEl = document.getElementById('combosList');
-  listEl.innerHTML = '';
-  REDEEMS[amount].forEach((combo, ci) => {
-    if (ci > 0) {
-      const d = document.createElement('div'); d.className = 'combo-or';
-      d.innerHTML = `<div class="combo-or-line"></div><div class="combo-or-text">or</div><div class="combo-or-line"></div>`;
-      listEl.appendChild(d);
-    }
-    const row = document.createElement('div'); row.className = 'combo-row';
-    combo.forEach(part => {
-      const item = ITEMS[part.key];
-      if (part.n >= 4) {
-        const ico = document.createElement('span'); ico.className = 'c-icon'; ico.textContent = item.icon; row.appendChild(ico);
-        const x = document.createElement('span'); x.className = 'c-plus'; x.textContent = `× ${part.n}`; row.appendChild(x);
-      } else {
-        for (let j = 0; j < part.n; j++) {
-          if (j > 0) { const p = document.createElement('span'); p.className='c-plus'; p.textContent='+'; row.appendChild(p); }
-          const ico = document.createElement('span'); ico.className='c-icon'; ico.textContent=item.icon; row.appendChild(ico);
-        }
-      }
-    });
-    listEl.appendChild(row);
-  });
-}
-
-function buildQRGrid(amount) {
-  const grid = document.getElementById('qrBottomGrid'); grid.innerHTML = '';
-  QR_KEYS[amount].forEach(key => {
-    const item = ITEMS[key], cid = `qr_dyn_${key}`;
-    const w = document.createElement('div'); w.className = 'qr-btm-item';
-    w.innerHTML = `<canvas id="${cid}" width="120" height="120"></canvas>
-                   <span class="qr-btm-icon">${item.icon}</span>
-                   <div class="qr-btm-name">${item.name}</div>
-                   <div class="qr-btm-price">${fmtVND(item.price)} ₫</div>`;
-    grid.appendChild(w); drawQR(cid, item.seed);
-  });
-}
-
 // ═══════════ SPIN ═══════════
 function spin() {
   if (isSpinning) return;
-  if (totalPrize <= 0) { document.getElementById('emptyBanner').style.display='block'; return; }
-  document.getElementById('emptyBanner').style.display = 'none';
-  // Reset result panel back to empty state before spinning
+  // Reset result panel back to empty state (legend) before spinning
   document.getElementById('resultWon').classList.remove('visible');
   document.getElementById('resultEmpty').style.display = 'flex';
 
   isSpinning = true;
   document.getElementById('spinBtn').disabled = true;
-  document.getElementById('resetBtn').disabled = true;
 
   const totalSpin = (5 + Math.random()*3.5)*2*Math.PI + Math.random()*2*Math.PI;
   const startRot = currentRot, dur = 4200 + Math.random()*900, t0 = performance.now();
@@ -624,14 +593,16 @@ function onSpinEnd(final) {
   currentRot = final; drawWheel(currentRot); isSpinning = false;
   const ptr = document.getElementById('pointer');
   ptr.classList.remove('bounce'); void ptr.offsetWidth; ptr.classList.add('bounce');
-  wonAmount = getSectorAtPointer(currentRot).value;
+  wonKey = getSectorAtPointer(currentRot).prize;
   setTimeout(showResult, 550);
 }
 
-// ═══════════ SHOW RESULT (right panel) ═══════════
+// ═══════════ SHOW RESULT ═══════════
 function showResult() {
-  document.getElementById('wonAmountDisplay').textContent = fmtVND(wonAmount);
-  buildCombos(wonAmount);
+  const item = ITEMS[wonKey];
+  document.getElementById('wonAmountDisplay').textContent = fmtVND(item.price);
+  document.getElementById('wonItemIcon').textContent = item.icon;
+  document.getElementById('wonItemName').textContent = item.name;
   document.getElementById('resultEmpty').style.display = 'none';
   const won = document.getElementById('resultWon');
   won.classList.remove('visible'); void won.offsetWidth; won.classList.add('visible');
@@ -639,50 +610,14 @@ function showResult() {
 
 // ═══════════ VALIDATE ═══════════
 function validate() {
-  // Flip result panel back to empty state
+  // Flip result panel back to empty state (legend), re-enable spin
   document.getElementById('resultWon').classList.remove('visible');
   document.getElementById('resultEmpty').style.display = 'flex';
-
-  const startVal = totalPrize, endVal = Math.max(0, totalPrize - wonAmount);
-  const dur = 1300, t0 = performance.now();
-  const el = document.getElementById('prizeDisplay');
-  const box = document.getElementById('prizeBox');
-
-  box.style.transition = 'transform 0.2s';
-  el.style.color = '#e63946';
-
-  (function animDown(now) {
-    const t = Math.min((now-t0)/dur, 1);
-    el.textContent = fmtVND(Math.round(startVal - (1-Math.pow(1-t,3))*(startVal-endVal)));
-    if (t < 1) { requestAnimationFrame(animDown); }
-    else {
-      totalPrize = endVal; el.textContent = fmtVND(totalPrize);
-      setTimeout(() => {
-        el.style.color = ''; box.style.transition = '';
-        document.getElementById('spinBtn').disabled = totalPrize <= 0;
-        document.getElementById('resetBtn').disabled = false;
-        if (totalPrize <= 0) document.getElementById('emptyBanner').style.display = 'block';
-      }, 350);
-    }
-  })(t0);
-}
-
-// ═══════════ RESET ═══════════
-function resetPrize() {
-  totalPrize = TOTAL;
-  const el = document.getElementById('prizeDisplay');
-  el.textContent = fmtVND(totalPrize); el.style.color = '';
-  document.getElementById('emptyBanner').style.display = 'none';
   document.getElementById('spinBtn').disabled = false;
-  const box = document.getElementById('prizeBox');
-  box.style.transition = 'transform 0.3s cubic-bezier(.34,1.56,.64,1)';
-  box.style.transform = 'scale(1.03)';
-  setTimeout(() => { box.style.transform='scale(1)'; setTimeout(()=>box.style.transition='',320); }, 320);
 }
 
 // ═══════════ FORMAT & INIT ═══════════
 function fmtVND(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
-document.getElementById('prizeDisplay').textContent = fmtVND(totalPrize);
 drawWheel(0);
 </script>
 </body>
